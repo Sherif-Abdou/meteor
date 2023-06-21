@@ -4,8 +4,10 @@ using std::string;
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 #include <fstream>
 #include <sstream>
+#include "src/OBJFile.h"
 
 string readFile(const char* path) {
     std::ifstream input_stream;
@@ -40,7 +42,6 @@ unsigned int createShaderProgram(const char* vPath, const char* fPath) {
     {
         glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-        std::cout << vFile << "\n";
     }
 
     glCompileShader(fragment_shader);
@@ -49,7 +50,6 @@ unsigned int createShaderProgram(const char* vPath, const char* fPath) {
     {
         glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-        std::cout << vFile << "\n";
     }
 
     unsigned int shader_program = glCreateProgram();
@@ -63,22 +63,65 @@ unsigned int createShaderProgram(const char* vPath, const char* fPath) {
     return shader_program;
 }
 
-unsigned int generateTriangleVAO() {
+unsigned int generateTriangleVAO(const std::vector<float>& buffer) {
+    long len = buffer.size();
+
     unsigned int vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-    float vertices[] {0.8f, 0.8f, 0.0f,
-                        0.0f, 0.0f, 0.0f,
-                        0.0f, 0.8f, 0.0f};
+
     unsigned int vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 9*sizeof(float), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, len*sizeof(float), buffer.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, (void*)0);
+    // Vertex
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 8*sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    // Normal
+    glVertexAttribPointer(1, 3, GL_FLOAT, false, 8*sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Tex Coord
+    glVertexAttribPointer(2, 2, GL_FLOAT, false, 8*sizeof(float), (void*)(6*sizeof(float)));
+    glEnableVertexAttribArray(2);
     return vao;
+}
+
+OBJFile getOBJFromPath(string path) {
+    std::ifstream stream(path);
+
+    OBJFile file {stream};
+
+    stream.close();
+
+    return file;
+}
+
+void define_uniforms(unsigned int shader_program) {
+    glm::mat4 modelViewMatrix = glm::mat4(1.0f);
+    modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0, 0.0, -3.0));
+    modelViewMatrix = glm::rotate(modelViewMatrix, glm::radians(45.0f), glm::vec3(1.0, 0.0, 0.0));
+    modelViewMatrix = glm::rotate(modelViewMatrix, glm::radians(45.0f), glm::vec3(0.0, 1.0, 0.0));
+    int location = glGetUniformLocation(shader_program, "uModelView");
+    glUniformMatrix4fv(location, 1, false, glm::value_ptr(modelViewMatrix));
+
+    glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), 1920.0f,1080.0f, 0.1f, 100.0f);
+    location = glGetUniformLocation(shader_program, "uPerspective");
+    glUniformMatrix4fv(location, 1, false, glm::value_ptr(perspectiveMatrix));
+    glm::vec3 eyePosition = glm::vec3(0, 0, 3.0);
+    location = glGetUniformLocation(shader_program, "uEyePosition");
+    glUniform3fv(location, 1, glm::value_ptr(eyePosition));
+}
+
+void render(unsigned int shader_program, long number, unsigned int vao) {
+    glUseProgram(shader_program);
+
+    define_uniforms(shader_program);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, number);
 }
 
 int main() {
@@ -87,7 +130,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Meteor", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1920, 1080, "Meteor", nullptr, nullptr);
 
     glfwMakeContextCurrent(window);
     int version = gladLoadGL(glfwGetProcAddress);
@@ -95,17 +138,29 @@ int main() {
         glfwTerminate();
         return -1;
     }
+    glViewport(0,0,1920,1080);
+    glEnable(GL_DEPTH_TEST);
 
     auto shader_program = createShaderProgram("shaders/vertex.vert", "shaders/fragment.frag");
-    auto vao = generateTriangleVAO();
+    auto obj = getOBJFromPath("models/monkey.obj");
+    auto buffer_data = obj.createBuffer();
+    auto number = obj.size();
+    auto vao = generateTriangleVAO(buffer_data);
 
-    glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(shader_program);
-    glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    render(shader_program, number, vao);
+
+    auto previous_time = glfwGetTime();
+    auto current_time = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)) {
-        glfwSwapBuffers(window);
+        current_time = glfwGetTime();
+        double deltaTime = current_time - previous_time;
+        if (current_time - previous_time > 1.0/60.0) {
+            render(shader_program, number, vao);
+            previous_time = current_time;
+            glfwSwapBuffers(window);
+        }
         glfwPollEvents();
     }
     glfwTerminate();
