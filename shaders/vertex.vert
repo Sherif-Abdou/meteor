@@ -4,17 +4,20 @@ layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aTexCoord;
 
 layout(location = 0) out vec3 vPos;
-smooth layout(location = 1) out vec3 vNormal;
+layout(location = 1) out vec3 vNormal;
 layout(location = 2) out vec2 vTexCoord;
 
 
 uniform mat4 uModelView;
 uniform mat4 uPerspective;
 uniform vec3 uEyePosition;
+uniform mat4 uTransform;
+uniform mat4 uNormalTransform;
 
 void main() {
-    gl_Position = uPerspective * uModelView * vec4(aPos, 1.0f);
-    vPos = aPos;
-    vNormal = aNormal;
+    gl_Position = uPerspective * uModelView * uTransform * vec4(aPos, 1.0f);
+//    gl_Position = vec4(aPos, 1.0f);
+    vPos = vec3(uTransform * vec4(aPos, 1.0f));
+    vNormal = vec3(uNormalTransform * vec4(aNormal, 1.0f));
     vTexCoord = aTexCoord;
 }
