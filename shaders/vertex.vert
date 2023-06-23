@@ -6,6 +6,7 @@ layout(location = 2) in vec2 aTexCoord;
 layout(location = 0) out vec3 vPos;
 layout(location = 1) out vec3 vNormal;
 layout(location = 2) out vec2 vTexCoord;
+layout(location = 3) out vec4 vLightSpaceCoord;
 
 
 uniform mat4 uModelView;
@@ -13,6 +14,7 @@ uniform mat4 uPerspective;
 uniform vec3 uEyePosition;
 uniform mat4 uTransform;
 uniform mat4 uNormalTransform;
+uniform mat4 uLightSpaceMatrix;
 
 void main() {
     gl_Position = uPerspective * uModelView * uTransform * vec4(aPos, 1.0f);
@@ -20,4 +22,5 @@ void main() {
     vPos = vec3(uTransform * vec4(aPos, 1.0f));
     vNormal = vec3(uNormalTransform * vec4(aNormal, 1.0f));
     vTexCoord = aTexCoord;
+    vLightSpaceCoord = uLightSpaceMatrix * uTransform * vec4(aPos, 1.0f);
 }

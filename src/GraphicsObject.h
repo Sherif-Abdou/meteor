@@ -23,10 +23,14 @@ private:
     void generateVAO();
     void addObjectUniforms();
 public:
+    GraphicsObject(const GraphicsObject&) = delete;
+    GraphicsObject(GraphicsObject&&) = default;
     glm::vec3 translation {};
     ShaderProgram& shader_program;
     explicit GraphicsObject(OBJFile&, ShaderProgram&);
     void render();
+    void raw_render();
+    void addObjectUniformsTo(ShaderProgram&);
 };
 
 

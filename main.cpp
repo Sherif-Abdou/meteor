@@ -10,9 +10,11 @@ using std::string;
 #include "src/OBJFile.h"
 #include "src/ShaderProgram.h"
 #include "src/GraphicsObject.h"
+#include "src/Renderer.h"
+#include "src/ShadowMap.h"
 
-constexpr float WIDTH = 800.0f;
-constexpr float HEIGHT = 600.0f;
+constexpr float WIDTH = 1920.0f;
+constexpr float HEIGHT = 1080.0f;
 
 const string MODEL = "models/different_sphere.obj";
 
@@ -58,6 +60,8 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_FRAMEBUFFER_SRGB);
     glEnable(GL_CULL_FACE);
+    glfwWindowHint(GL_SAMPLES, 4);
+    glEnable(GL_MULTISAMPLE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto obj = getOBJFromPath(MODEL);
@@ -67,35 +71,67 @@ int main() {
     obj = getOBJFromPath(MODEL2);
     auto graphics_body2 = GraphicsObject(obj, shader_program);
 
+    obj = getOBJFromPath("models/quad.obj");
+    auto debug_shader = ShaderProgram("shaders/debug.vert", "shaders/debug.frag");
+    auto graphics_body3 = GraphicsObject(obj, debug_shader);
+
     glm::mat4 modelViewMatrix = glm::mat4(1.0f);
-    modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0, 0.0, -4.5));
+    modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0, 0.0, -5.));
     glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), WIDTH,HEIGHT, 0.1f, 100.0f);
 
     shader_program.setPerspectiveMatrix(perspectiveMatrix);
     shader_program.setViewMatrix(modelViewMatrix);
-    auto eyePosition = glm::vec3(0.0, 0.0, 4.5f);
+    auto eyePosition = glm::vec3(0.0, 0.0, 5.0f);
     shader_program.addVec3Uniform("uEyePosition", eyePosition);
+
+    int frame_counter = 0;
+    graphics_body.translation = glm::vec3(0.0f, 2.0f, 0.0f);
+//    graphics_body3.translation = glm::vec3(3.0, 3.0, 0.0);
+
+    // Slapped together gravity
+    auto velocity = glm::vec3(0.5f, 0.5f, 0.0f);
+    graphics_body2.translation = glm::vec3(0.0, -3.0f, 0.0f);
+    auto shadow_shaders = ShaderProgram("shaders/light.vert", "shaders/light.frag");
+
+    auto renderer = Renderer();
+//    renderer.shader_programs.push_back(std::move(shader_program));
+//    renderer.shader_programs.push_back(std::move(shadow_shaders));
+    renderer.objects.push_back(std::move(graphics_body));
+    renderer.objects.push_back(std::move(graphics_body2));
+
+    auto shadow_map = ShadowMap(shadow_shaders);
+    shadow_map.light_position = glm::vec3(0.0f, 4.0f, -0.0f);
+    shadow_map.render_depth_map(renderer);
+    renderer.objects[0].shader_program.addMatrix4Uniform("uLightSpaceMatrix", shadow_map.getLightSpaceMatrix());
+//    renderer.objects.push_back(std::move(graphics_body3));
+    renderer.render_to_window();
+
 
     auto previous_time = glfwGetTime();
     double current_time;
     auto last_second = glfwGetTime();
-    int frame_counter = 0;
-    graphics_body.translation = glm::vec3(-0.5f, 0.5f, 0.0f);
-
-    auto velocity = glm::vec3(0.5f, 0.5f, 0.0f);
-    bool start = true;
-    graphics_body2.translation = glm::vec3(0.0, -3.0f, 0.0f);
+    bool motion = false;
+    bool held = false;
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+        if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+            if (!held) {
+                motion = !motion;
+                held = true;
+            }
+        } else {
+            held = false;
+        }
         current_time = glfwGetTime();
         double deltaTime = current_time - previous_time;
-        if (current_time - previous_time > 1.0/300.0 && start) {
-            velocity -= glm::vec3(0.0f * deltaTime, 0.2f * deltaTime, 0.0f * deltaTime);
-            graphics_body.translation += glm::vec3(velocity.x*deltaTime, velocity.y * deltaTime, velocity.z * deltaTime);
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            graphics_body.render();
-            graphics_body2.render();
+        if (current_time - previous_time > 1.0/300.0) {
+            if (motion) {
+                velocity -= glm::vec3(0.0f * deltaTime, 0.2f * deltaTime, 0.0f * deltaTime);
+                renderer.objects[0].translation += glm::vec3(velocity.x*deltaTime, velocity.y * deltaTime, velocity.z * deltaTime);
+                shadow_map.render_depth_map(renderer);
+                renderer.objects[0].shader_program.addMatrix4Uniform("uLightSpaceMatrix", shadow_map.getLightSpaceMatrix());
+                renderer.render_to_window();
+            }
 
             previous_time = current_time;
             glfwSwapBuffers(window);

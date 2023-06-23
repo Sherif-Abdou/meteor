@@ -23,7 +23,7 @@ void GraphicsObject::generateVAO() {
     unsigned int vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, len*sizeof(float), buffer.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, len*sizeof(float), buffer.data(), GL_STATIC_DRAW);
 
 
     // Vertex
@@ -45,15 +45,23 @@ void GraphicsObject::render() {
     addObjectUniforms();
     shader_program.addUniforms();
 
-    glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, vertices);
+    raw_render();
 }
 
-void GraphicsObject::addObjectUniforms() {
+void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program) {
     auto transformMatrix = glm::identity<glm::mat4>();
     transformMatrix = glm::translate(transformMatrix, translation);
     auto normalTransform = glm::inverseTranspose(transformMatrix);
 
     shader_program.addMatrix4Uniform("uTransform", transformMatrix);
     shader_program.addMatrix4Uniform("uNormalTransform", normalTransform);
+}
+
+void GraphicsObject::addObjectUniforms() {
+    addObjectUniformsTo(shader_program);
+}
+
+void GraphicsObject::raw_render() {
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, vertices);
 }

@@ -47,7 +47,7 @@ ShaderProgram::ShaderProgram(const ShaderProgram::string& vertexShaderPath, cons
     if(!success)
     {
         glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
-        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cerr << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
 
     unsigned int shader_program = glCreateProgram();
