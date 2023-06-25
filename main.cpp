@@ -13,6 +13,8 @@ using std::string;
 #include "src/Renderer.h"
 #include "src/ShadowMap.h"
 #include "src/GraphicsObjectFactory.h"
+#include "src/RenderPipeline.h"
+#include "src/render_passes/ForwardPass.h"
 
 constexpr float WIDTH = 1920.0f;
 constexpr float HEIGHT = 1080.0f;
@@ -89,27 +91,37 @@ int main() {
     shader_program.addVec3Uniform("uEyePosition", eyePosition);
 
     graphics_body.translation = glm::vec3(0.0f, 2.0f, 0.0f);
-
-    // Slapped together gravity
-    glm::vec3 velocity = glm::vec3(0.5f, 0.5f, 0.0f);
     graphics_body2.translation = glm::vec3(0.0, -3.0f, 0.0f);
-    auto shadow_shaders = ShaderProgram("shaders/light.vert", "shaders/light.frag");
+//
+//    // Slapped together gravity
+//    glm::vec3 velocity = glm::vec3(0.5f, 0.5f, 0.0f);
+//    auto shadow_shaders = ShaderProgram("shaders/light.vert", "shaders/light.frag");
+//
+//    auto renderer = Renderer();
+//    renderer.shader_programs.push_back(std::move(shader_program));
+//    renderer.shader_programs.push_back(std::move(shadow_shaders));
+//    renderer.objects.push_back(std::move(graphics_body));
+//    renderer.objects.push_back(std::move(graphics_body2));
+//
+//    auto shadow_map = ShadowMap(renderer.shader_programs[1]);
+//    shadow_map.light_position = glm::vec3(0.0f, 6.0f, -0.0f);
+//    shadow_map.render_depth_map(renderer);
+//    renderer.objects[0].shader_program.addMatrix4Uniform("uLightSpaceMatrix", shadow_map.getLightSpaceMatrix());
+//    renderer.render_to_window();
+//    frame_loop(window, velocity, renderer, shadow_map);
+    RenderPipeline pipeline {};
+    RenderPass* pass = new ForwardPass();
+    pipeline.graphics_object["second"] = &graphics_body;
+    pipeline.graphics_object["main"] = &graphics_body2;
+    pipeline.addPass(pass);
 
-    auto renderer = Renderer();
-    renderer.shader_programs.push_back(std::move(shader_program));
-    renderer.shader_programs.push_back(std::move(shadow_shaders));
-    renderer.objects.push_back(std::move(graphics_body));
-    renderer.objects.push_back(std::move(graphics_body2));
-
-    auto shadow_map = ShadowMap(renderer.shader_programs[1]);
-    shadow_map.light_position = glm::vec3(0.0f, 6.0f, -0.0f);
-    shadow_map.render_depth_map(renderer);
-    renderer.objects[0].shader_program.addMatrix4Uniform("uLightSpaceMatrix", shadow_map.getLightSpaceMatrix());
-    renderer.render_to_window();
-
-
-    frame_loop(window, velocity, renderer, shadow_map);
+    pipeline.render();
+    glfwSwapBuffers(window);
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+    }
     glfwTerminate();
+    delete pass;
     return 0;
 }
 

@@ -25,6 +25,7 @@ private:
 public:
     GraphicsObject(const GraphicsObject&) = delete;
     GraphicsObject(GraphicsObject&&) = default;
+    GraphicsObject& operator=(GraphicsObject&&) = default;
     glm::vec3 translation {};
     ShaderProgram& shader_program;
     explicit GraphicsObject(OBJFile&, ShaderProgram&);

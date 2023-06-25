@@ -38,6 +38,7 @@ public:
     explicit ShaderProgram(const string& vertexShaderPath, const string& fragmentShaderPath);
     explicit ShaderProgram(const ShaderProgram&) = delete;
     ShaderProgram(ShaderProgram&&) = default;
+    ShaderProgram& operator=(ShaderProgram&&) = default;
     void clearLocalUniforms();
     void addMatrix4Uniform(const string& name, glm::mat4 matrix);
     void addVec3Uniform(const string& name, glm::vec3 vector);
