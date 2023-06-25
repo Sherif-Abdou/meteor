@@ -26,12 +26,9 @@ float shadow_calculation(vec4 light_space_coord) {
     float closestDepth = texture2D(shadowMap, projCoord.xy).r;
     float currentDepth = projCoord.z;
 
-//    if (currentDepth <= closestDepth) {
-//        discard;
-//    }
-
-    float bias = max(0.05 * (1.0 - vNormal.y), 0.005);
-    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+//    float bias = max(0.05 * (1.0 - vNormal.y), 0.005);
+    float bias = 0.005;
+    float shadow = currentDepth - bias > closestDepth ? 0.8 : 0.0;
 //    color = vec4(currentDepth - closestDepth);
 
     if (projCoord.z > 1.0) {
@@ -57,6 +54,4 @@ void main() {
             ka * ambientColor +
             kd * (1.0 - shadow) * lambertian * diffuseColor +
             ks * (1.0 - shadow) * pow(specular, 256.0f) * specularColor;
-//            + (1.0 - shadow) * vec4(0.0f, 0.9f, 0.0f, 1.0f);
-//    color = mix(vec4(texture(shadowMap, vTexCoord)), vec4(1.0f, 0.0f, 0.0f, 1.0f), 0.0);
 }

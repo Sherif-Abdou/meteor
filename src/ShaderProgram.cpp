@@ -72,6 +72,7 @@ void ShaderProgram::addGlobalUniforms() {
 void ShaderProgram::clearLocalUniforms() {
     localMatrix4Uniforms.clear();
     localVec3Uniforms.clear();
+    localIntegerUniforms.clear();
 }
 
 void ShaderProgram::addMatrix4Uniform(const ShaderProgram::string &name, glm::mat4 matrix) {
@@ -92,6 +93,11 @@ void ShaderProgram::addLocalUniforms() {
     for (const auto& [name, vector] : localVec3Uniforms) {
         location = glGetUniformLocation(shader_program_id, name.c_str());
         glUniform3fv(location, 1, glm::value_ptr(vector));
+    }
+
+    for (const auto& [name, integer] : localIntegerUniforms) {
+        location = glGetUniformLocation(shader_program_id, name.c_str());
+        glUniform1i(location, integer);
     }
 }
 
@@ -118,4 +124,8 @@ const glm::mat4 &ShaderProgram::getViewMatrix() const {
 
 void ShaderProgram::setViewMatrix(const glm::mat4 &viewMatrix) {
     ShaderProgram::viewMatrix = viewMatrix;
+}
+
+void ShaderProgram::addIntegerUniform(const ShaderProgram::string &name, int number) {
+    localIntegerUniforms[name] = number;
 }

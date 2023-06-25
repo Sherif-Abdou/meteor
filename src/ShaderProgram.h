@@ -15,6 +15,7 @@
 class ShaderProgram {
 private:
     using string = std::string;
+    std::map<int, int> textures;
     glm::mat4 perspectiveMatrix = glm::identity<glm::mat4>();
     glm::mat4 viewMatrix = glm::identity<glm::mat4>(); // Transform objects for camera purposes
     std::map<string, glm::mat4> localMatrix4Uniforms {};
@@ -29,6 +30,7 @@ public:
 
 private:
     std::map<string, glm::vec3> localVec3Uniforms {};
+    std::map<string, int> localIntegerUniforms {};
     unsigned int shader_program_id;
     void addGlobalUniforms();
     void addLocalUniforms();
@@ -39,6 +41,7 @@ public:
     void clearLocalUniforms();
     void addMatrix4Uniform(const string& name, glm::mat4 matrix);
     void addVec3Uniform(const string& name, glm::vec3 vector);
+    void addIntegerUniform(const string& name, int number);
     void addUniforms();
     void applyProgram();
 };
