@@ -15,6 +15,7 @@ using std::string;
 #include "src/GraphicsObjectFactory.h"
 #include "src/RenderPipeline.h"
 #include "src/render_passes/ForwardPass.h"
+#include "src/render_passes/ShadowPass.h"
 
 constexpr float WIDTH = 1920.0f;
 constexpr float HEIGHT = 1080.0f;
@@ -90,7 +91,7 @@ int main() {
 
     shader_program.addVec3Uniform("uEyePosition", eyePosition);
 
-    graphics_body.translation = glm::vec3(0.0f, 2.0f, 0.0f);
+    graphics_body.translation = glm::vec3(0.0f, 0.0f, 0.0f);
     graphics_body2.translation = glm::vec3(0.0, -3.0f, 0.0f);
 //
 //    // Slapped together gravity
@@ -110,9 +111,13 @@ int main() {
 //    renderer.render_to_window();
 //    frame_loop(window, velocity, renderer, shadow_map);
     RenderPipeline pipeline {};
+
+    RenderPass* shadowPass = new ShadowPass(glm::vec3(0.0f, 6.0f, -0.0f));
     RenderPass* pass = new ForwardPass();
-    pipeline.graphics_object["second"] = &graphics_body;
-    pipeline.graphics_object["main"] = &graphics_body2;
+
+    pipeline.graphics_object["main"] = &graphics_body;
+    pipeline.graphics_object["second"] = &graphics_body2;
+    pipeline.addPass(shadowPass);
     pipeline.addPass(pass);
 
     pipeline.render();

@@ -18,8 +18,9 @@ private:
     void addTexturesToRenderPass(RenderPass&);
     void addObjectsToRenderPass(RenderPass&);
 public:
-    std::map<std::string, GraphicsObject*> graphics_object;
-    std::map<std::string, unsigned int> textures;
+    std::map<std::string, GraphicsObject*> graphics_object {};
+    std::map<std::string, unsigned int> textures {};
+    UniformObject uniforms {};
 
     void render();
     void addPass(RenderPass* pass);

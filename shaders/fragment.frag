@@ -26,8 +26,8 @@ float shadow_calculation(vec4 light_space_coord) {
     float closestDepth = texture2D(shadowMap, projCoord.xy).r;
     float currentDepth = projCoord.z;
 
-//    float bias = max(0.05 * (1.0 - vNormal.y), 0.005);
-    float bias = 0.005;
+    float bias = max(0.05 * (1.0 - vNormal.y), 0.005);
+//    float bias = 0.005;
     float shadow = currentDepth - bias > closestDepth ? 0.8 : 0.0;
 //    color = vec4(currentDepth - closestDepth);
 

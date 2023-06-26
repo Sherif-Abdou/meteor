@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include "../GraphicsObject.h"
+#include "UniformObject.h"
 
 class RenderPass {
 protected:
@@ -24,8 +25,9 @@ public:
     /// Generate frame_buffers, textures and other buffers you may need
     virtual void init() = 0;
     virtual void setInputTexture(const std::string&, unsigned int);
-    virtual void setOutputTexture(const std::string&, unsigned int);
+    virtual std::map<std::string, unsigned int>& getOutputTextures();
     virtual void setInputObject(const std::string&, GraphicsObject*);
+    virtual void addUniformsToPipeline(UniformObject&);
     virtual ShaderProgram& getShader() = 0;
 
     virtual ~RenderPass() = default;

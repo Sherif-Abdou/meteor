@@ -11,8 +11,12 @@ void RenderPipeline::render() {
         addTexturesToRenderPass(*pass);
         addObjectsToRenderPass(*pass);
 
+
         pass->init();
+        uniforms.addToShader(pass->getShader());
         pass->render();
+        pass->addUniformsToPipeline(uniforms);
+        textures.insert(pass->getOutputTextures().begin(), pass->getOutputTextures().end());
     }
 }
 

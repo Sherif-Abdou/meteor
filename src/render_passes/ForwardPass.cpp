@@ -23,6 +23,7 @@ void ForwardPass::render() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBindTexture(GL_TEXTURE0, texture_inputs["shadow_map"]);
     shader_program->applyProgram();
 
     for (auto& [_, object] : object_inputs) {
