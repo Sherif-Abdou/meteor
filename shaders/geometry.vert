@@ -2,10 +2,12 @@
 
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aNormal;
+layout(location = 2) in vec2 aTexCoord;
 layout(location = 3) in vec3 aTangent;
 
 layout(location = 0) out vec3 vPos;
 layout(location = 1) out vec3 vNormal;
+layout(location = 2) out vec2 vTexCoord;
 layout(location = 3) out vec3 vTangent;
 
 
@@ -21,4 +23,5 @@ void main() {
     vPos = vec3(uTransform * vec4(aPos, 1.0f));
     vNormal = vec3(uNormalTransform * vec4(aNormal, 1.0f));
     vTangent = vec3(uTransform * vec4(aTangent, 1.0f));
+    vTexCoord = aTexCoord;
 }

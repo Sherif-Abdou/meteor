@@ -15,8 +15,7 @@ out vec4 color;
 vec3 lightSource = vec3(0.0f, 4.0f, -0.0f);
 vec3 eyeSource = vec3(0.0f, 0.0, 2.0f);
 
-vec4 diffuseColor = vec4(0.9f, 0.0f, 0.0f, 1.0f);
-vec4 specularColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+vec4 specularColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 float ka = 0.3f;
 float kd = 0.8f;
 float ks = 0.8f;
@@ -41,7 +40,7 @@ float shadow_calculation(vec4 light_space_coord) {
 }
 
 void main() {
-
+    vec4 diffuseColor = vec4(texture(albedo, vTexCoord).xyz, 1.0f);
     vec3 vPos = texture(position, vTexCoord).xyz;
     vec3 vNormal = texture(normal, vTexCoord).xyz;
 

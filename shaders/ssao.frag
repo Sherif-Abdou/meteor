@@ -8,17 +8,21 @@ uniform sampler2D position;
 uniform sampler2D normal;
 uniform sampler2D noiseMap;
 
-out vec4 color;
+out float color;
 uniform float raw_samples[64*3];
 uniform mat4 uPerspective;
 uniform mat4 uModelView;
 
 const vec2 noiseScale = vec2(1920.0/4.0, 1080.0/4.0);
 const float radius = 0.5f;
+const float bias = 0.025f;
 
 void main() {
     vec3 fragPos = texture(position, vTexCoord).xyz;
-    vec3 fragNormal = normalize(texture(normal, vTexCoord).xyz);
+    vec3 fragNormal = texture(normal, vTexCoord).xyz;
+//    if (fragNormal == vec3(0.0)) {
+//        discard;
+//    }
     vec3 randomVec = texture(noiseMap, vTexCoord * noiseScale).xyz;
     vec3 tangent = normalize(randomVec - fragNormal * dot(randomVec, fragNormal));
     vec3 bitangent = cross(fragNormal, tangent);
@@ -38,10 +42,10 @@ void main() {
 //            continue;
 //        }
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
-        occlusion += (sampleDepth >= samplePosition.z + 0.025 ? 1.0 : 0.0) * rangeCheck ;
+        occlusion += (sampleDepth >= samplePosition.z + bias ? 1.0 : 0.0) * rangeCheck ;
 //        color = vec4(sampleDepth);
     }
     occlusion = 1.0 - (occlusion/64.0);
-    color = vec4(occlusion, 0.0, 0.0, 1.0);
+    color = occlusion;
 //    color /= 64.0/**/;
 }

@@ -29,7 +29,7 @@ const string MODEL2 = "models/background.obj";
 const glm::vec3 eyePosition = glm::vec3(0.0, 0.0, 5.0f);
 
 void setup_camera(ShaderProgram &shader_program);
-void frame_loop(GLFWwindow *window, glm::vec3 velocity, Renderer &renderer, ShadowMap &shadow_map);
+void frame_loop(GLFWwindow *window, glm::vec3 velocity, RenderPipeline& pipeline);
 
 
 string readFile(const char* path) {
@@ -95,7 +95,7 @@ int main() {
     shader_program.addVec3Uniform("uEyePosition", eyePosition);
 
     graphics_body.translation = glm::vec3(0.0f, -0.0f, 0.0f);
-    graphics_body.rotation = glm::vec3(0.0f, -45.f, 0.0f);
+    graphics_body.rotation = glm::vec3(0.0f, -45.f, 45.0f);
     graphics_body.scale = glm::vec3(0.3f);
     graphics_body2.translation = glm::vec3(0.0, -1.0f, 0.0f);
 //
@@ -123,26 +123,30 @@ int main() {
     RenderPass* deferredPass = new DeferredPass();
 
     pipeline.graphics_object["main"] = &graphics_body;
+    pipeline.graphics_object["main"]->setAlbedoTexture("textures/1001_albedo.jpg");
     pipeline.graphics_object["second"] = &graphics_body2;
+    pipeline.graphics_object["second"]->setAlbedoTexture("textures/red.jpg");
     pipeline.graphics_object["deferred_quad"] = &graphics_body3;
     pipeline.addPass(shadowPass);
     pipeline.addPass(geoPass);
     pipeline.addPass(ssaoPass);
     pipeline.addPass(deferredPass);
 
+    pipeline.init();
     pipeline.render();
     glfwSwapBuffers(window);
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-    }
+
+    frame_loop(window, glm::vec3(0.0f, 1.0f, 0.0f), pipeline);
+
     glfwTerminate();
     delete shadowPass;
     delete geoPass;
+    delete ssaoPass;
     delete deferredPass;
     return 0;
 }
 
-void frame_loop(GLFWwindow *window, glm::vec3 velocity, Renderer &renderer, ShadowMap &shadow_map) {
+void frame_loop(GLFWwindow *window, glm::vec3 velocity, RenderPipeline& pipeline) {
     int frame_counter = 0;
     auto previous_time = glfwGetTime();
     double current_time;
@@ -161,13 +165,12 @@ void frame_loop(GLFWwindow *window, glm::vec3 velocity, Renderer &renderer, Shad
         }
         current_time = glfwGetTime();
         double deltaTime = current_time - previous_time;
-        if (current_time - previous_time > 1.0/300.0) {
+        if (current_time - previous_time > 0.0) {
             if (motion) {
                 velocity -= glm::vec3(0.0f * deltaTime, 0.2f * deltaTime, 0.0f * deltaTime);
-                renderer.objects[0].translation += glm::vec3(velocity.x*deltaTime, velocity.y * deltaTime, velocity.z * deltaTime);
-                shadow_map.render_depth_map(renderer);
-                renderer.objects[0].shader_program.addMatrix4Uniform("uLightSpaceMatrix", shadow_map.getLightSpaceMatrix());
-                renderer.render_to_window();
+//                pipeline.graphics_object["main"]->translation += glm::vec3(deltaTime) * velocity;
+                pipeline.graphics_object["main"]->rotation.y += 45.0f * deltaTime;
+                pipeline.render();
             }
 
             previous_time = current_time;

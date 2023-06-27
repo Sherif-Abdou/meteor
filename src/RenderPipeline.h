@@ -22,6 +22,7 @@ public:
     std::map<std::string, unsigned int> textures {};
     UniformObject uniforms {};
 
+    void init();
     void render();
     void addPass(RenderPass* pass);
 };

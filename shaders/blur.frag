@@ -4,7 +4,7 @@ layout(location = 2) in vec2 vTexCoord;
 
 uniform sampler2D ssao;
 
-out vec4 color;
+out float color;
 
 void main() {
     vec2 texelSize = 1.0 / vec2(textureSize(ssao, 0));
@@ -15,5 +15,5 @@ void main() {
             result += texture(ssao, vTexCoord + offset).r;
         }
     }
-    color = vec4(result/(4.0*4.0), 0.0, 0.0, 1.0);
+    color = result/(4.0*4.0);
 }

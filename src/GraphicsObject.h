@@ -5,7 +5,7 @@
 #ifndef METEOR_GRAPHICSOBJECT_H
 #define METEOR_GRAPHICSOBJECT_H
 
-
+#include <optional>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -13,17 +13,18 @@
 #include "ShaderProgram.h"
 #include <glad/gl.h>
 
-
 class GraphicsObject {
 private:
     std::vector<float> buffer;
     unsigned int vao;
     unsigned int vertices;
+    unsigned int albedoTexture;
 
     void generateVAO();
     void addObjectUniforms();
-    void generateTangents();
+    std::optional<std::string> albedoTexturePath {};
 public:
+    void setAlbedoTexture(std::string path);
     GraphicsObject(const GraphicsObject&) = delete;
     GraphicsObject(GraphicsObject&&) = default;
     GraphicsObject& operator=(GraphicsObject&&) = default;
@@ -34,7 +35,7 @@ public:
     explicit GraphicsObject(OBJFile&, ShaderProgram&);
     void render();
     void raw_render();
-    void addObjectUniformsTo(ShaderProgram&);
+    void addObjectUniformsTo(ShaderProgram&, bool applyTextures=false);
 };
 
 

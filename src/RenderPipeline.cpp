@@ -12,7 +12,6 @@ void RenderPipeline::render() {
         addObjectsToRenderPass(*pass);
 
 
-        pass->init();
         uniforms.addToShader(pass->getShader());
         pass->render();
         pass->addUniformsToPipeline(uniforms);
@@ -34,5 +33,11 @@ void RenderPipeline::addObjectsToRenderPass(RenderPass & pass) {
 
 void RenderPipeline::addPass(RenderPass* pass) {
     passes.push_back(pass);
+}
+
+void RenderPipeline::init() {
+    for (auto pass: passes) {
+        pass->init();
+    }
 }
 

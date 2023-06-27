@@ -23,7 +23,7 @@ void GraphicsObject::generateVAO() {
     unsigned int vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, len*sizeof(float), buffer.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, len*sizeof(float), buffer.data(), GL_DYNAMIC_DRAW);
 
 
     // Vertex
@@ -52,7 +52,7 @@ void GraphicsObject::render() {
     raw_render();
 }
 
-void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program) {
+void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program, bool applyTextures) {
     auto transformMatrix = glm::identity<glm::mat4>();
     transformMatrix = glm::translate(transformMatrix, translation);
 
@@ -65,6 +65,16 @@ void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program) {
 
     shader_program.addMatrix4Uniform("uTransform", transformMatrix);
     shader_program.addMatrix4Uniform("uNormalTransform", normalTransform);
+
+    if (applyTextures) {
+        if (albedoTexturePath.has_value()) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, albedoTexture);
+        } else {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, GL_NONE);
+        }
+    }
 }
 
 void GraphicsObject::addObjectUniforms() {
@@ -74,5 +84,21 @@ void GraphicsObject::addObjectUniforms() {
 void GraphicsObject::raw_render() {
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, vertices);
+}
+
+void GraphicsObject::setAlbedoTexture(std::string path) {
+    albedoTexturePath = std::optional<std::string>(path);
+
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+    glGenTextures(1, &albedoTexture);
+    glBindTexture(GL_TEXTURE_2D, albedoTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    stbi_image_free(data);
 }
 
