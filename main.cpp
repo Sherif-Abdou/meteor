@@ -16,13 +16,16 @@ using std::string;
 #include "src/RenderPipeline.h"
 #include "src/render_passes/ForwardPass.h"
 #include "src/render_passes/ShadowPass.h"
+#include "src/render_passes/GeometryPass.h"
+#include "src/render_passes/DeferredPass.h"
+#include "src/render_passes/SSAOPass.h"
 
 constexpr float WIDTH = 1920.0f;
 constexpr float HEIGHT = 1080.0f;
 
-const string MODEL = "models/different_sphere.obj";
+const string MODEL = "models/super_backpack.obj";
 
-const string MODEL2 = "models/floor.obj";
+const string MODEL2 = "models/background.obj";
 const glm::vec3 eyePosition = glm::vec3(0.0, 0.0, 5.0f);
 
 void setup_camera(ShaderProgram &shader_program);
@@ -91,8 +94,10 @@ int main() {
 
     shader_program.addVec3Uniform("uEyePosition", eyePosition);
 
-    graphics_body.translation = glm::vec3(0.0f, 0.0f, 0.0f);
-    graphics_body2.translation = glm::vec3(0.0, -3.0f, 0.0f);
+    graphics_body.translation = glm::vec3(0.0f, -0.0f, 0.0f);
+    graphics_body.rotation = glm::vec3(0.0f, -45.f, 0.0f);
+    graphics_body.scale = glm::vec3(0.3f);
+    graphics_body2.translation = glm::vec3(0.0, -1.0f, 0.0f);
 //
 //    // Slapped together gravity
 //    glm::vec3 velocity = glm::vec3(0.5f, 0.5f, 0.0f);
@@ -112,13 +117,18 @@ int main() {
 //    frame_loop(window, velocity, renderer, shadow_map);
     RenderPipeline pipeline {};
 
-    RenderPass* shadowPass = new ShadowPass(glm::vec3(0.0f, 6.0f, -0.0f));
-    RenderPass* pass = new ForwardPass();
+    RenderPass* shadowPass = new ShadowPass(glm::vec3(0.0f, 4.0f, -0.0f));
+    RenderPass* geoPass = new GeometryPass();
+    RenderPass* ssaoPass = new SSAOPass();
+    RenderPass* deferredPass = new DeferredPass();
 
     pipeline.graphics_object["main"] = &graphics_body;
     pipeline.graphics_object["second"] = &graphics_body2;
+    pipeline.graphics_object["deferred_quad"] = &graphics_body3;
     pipeline.addPass(shadowPass);
-    pipeline.addPass(pass);
+    pipeline.addPass(geoPass);
+    pipeline.addPass(ssaoPass);
+    pipeline.addPass(deferredPass);
 
     pipeline.render();
     glfwSwapBuffers(window);
@@ -126,7 +136,9 @@ int main() {
         glfwPollEvents();
     }
     glfwTerminate();
-    delete pass;
+    delete shadowPass;
+    delete geoPass;
+    delete deferredPass;
     return 0;
 }
 

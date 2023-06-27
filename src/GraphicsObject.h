@@ -22,11 +22,14 @@ private:
 
     void generateVAO();
     void addObjectUniforms();
+    void generateTangents();
 public:
     GraphicsObject(const GraphicsObject&) = delete;
     GraphicsObject(GraphicsObject&&) = default;
     GraphicsObject& operator=(GraphicsObject&&) = default;
     glm::vec3 translation {};
+    glm::vec3 rotation {};
+    glm::vec3 scale = glm::vec3(1.0f);
     ShaderProgram& shader_program;
     explicit GraphicsObject(OBJFile&, ShaderProgram&);
     void render();

@@ -27,16 +27,20 @@ void GraphicsObject::generateVAO() {
 
 
     // Vertex
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 8*sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 11*sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     // Normal
-    glVertexAttribPointer(1, 3, GL_FLOAT, false, 8*sizeof(float), (void*)(3*sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, false, 11*sizeof(float), (void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
 
     // Tex Coord
-    glVertexAttribPointer(2, 2, GL_FLOAT, false, 8*sizeof(float), (void*)(6*sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, false, 11*sizeof(float), (void*)(9*sizeof(float)));
     glEnableVertexAttribArray(2);
+
+    // Tangent
+    glVertexAttribPointer(3, 3, GL_FLOAT, false, 11*sizeof(float), (void*)(6*sizeof(float)));
+    glEnableVertexAttribArray(3);
     this->vao = vao;
 }
 
@@ -51,6 +55,12 @@ void GraphicsObject::render() {
 void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program) {
     auto transformMatrix = glm::identity<glm::mat4>();
     transformMatrix = glm::translate(transformMatrix, translation);
+
+    transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    transformMatrix = glm::scale(transformMatrix, scale);
     auto normalTransform = glm::inverseTranspose(transformMatrix);
 
     shader_program.addMatrix4Uniform("uTransform", transformMatrix);
@@ -65,3 +75,4 @@ void GraphicsObject::raw_render() {
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, vertices);
 }
+

@@ -21,7 +21,9 @@ private:
     std::vector<glm::vec3> vertices{};
     std::vector<glm::vec3> normals{};
     std::vector<glm::vec2> texCoords{};
+    std::vector<glm::vec3> tangents{};
     std::vector<Face> faces{};
+    glm::vec3 calculateTangent(Face&);
 public:
     explicit OBJFile(std::istream&);
     std::vector<float> createBuffer();

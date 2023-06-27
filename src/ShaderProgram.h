@@ -32,6 +32,10 @@ private:
     std::map<string, glm::vec3> localVec3Uniforms {};
     std::map<string, int> localIntegerUniforms {};
     unsigned int shader_program_id;
+public:
+    unsigned int getShaderProgramId() const;
+
+private:
     void addGlobalUniforms();
     void addLocalUniforms();
 public:

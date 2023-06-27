@@ -129,3 +129,7 @@ void ShaderProgram::setViewMatrix(const glm::mat4 &viewMatrix) {
 void ShaderProgram::addIntegerUniform(const ShaderProgram::string &name, int number) {
     localIntegerUniforms[name] = number;
 }
+
+unsigned int ShaderProgram::getShaderProgramId() const {
+    return shader_program_id;
+}

@@ -47,7 +47,10 @@ void ShadowPass::render() {
     generate_matrices(lightProjection, lightModelView);
     shader_program->setPerspectiveMatrix(lightProjection);
     shader_program->setViewMatrix(lightModelView);
-    for (auto& [_, object] : object_inputs) {
+    for (auto& [name, object] : object_inputs) {
+        if (name == "deferred_quad") {
+            continue;
+        }
         object->addObjectUniformsTo(*shader_program);
         shader_program->addUniforms();
         object->raw_render();

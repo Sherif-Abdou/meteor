@@ -1,0 +1,17 @@
+#version 410 core
+
+layout(location = 0) in vec3 vPos;
+layout(location = 1) in vec3 vNormal;
+layout(location = 3) in vec3 vTangent;
+
+layout(location = 0) out vec3 gPos;
+layout(location = 1) out vec3 gNormal;
+layout(location = 2) out vec4 gAlbedo;
+layout(location = 3) out vec3 gTangent;
+
+void main() {
+    gPos = vPos;
+    gNormal = normalize(vNormal);
+    gTangent = normalize(vTangent);
+    gAlbedo = vec4(0.3, 0.4, 0.2, 0.5);
+}

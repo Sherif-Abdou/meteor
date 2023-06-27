@@ -53,6 +53,7 @@ OBJFile::OBJFile(std::istream& stream) {
 std::vector<float> OBJFile::createBuffer() {
     auto buffer = std::vector<float>();
     for (auto& face : faces) {
+        auto tangent = calculateTangent(face);
         for (int i = 0; i < face.vertices.size(); i++) {
             auto& vertex = face.vertices[i];
             auto& normal = face.normals[i];
@@ -63,6 +64,9 @@ std::vector<float> OBJFile::createBuffer() {
             buffer.push_back(normal.x);
             buffer.push_back(normal.y);
             buffer.push_back(normal.z);
+            buffer.push_back(tangent.x);
+            buffer.push_back(tangent.y);
+            buffer.push_back(tangent.z);
             buffer.push_back(tex.x);
             buffer.push_back(tex.y);
         }
@@ -78,5 +82,29 @@ long OBJFile::size() const {
     }
 
     return i;
+}
+
+glm::vec3 OBJFile::calculateTangent(Face & face) {
+    auto pos = face.vertices[0];
+    auto pos2 = face.vertices[1];
+    auto pos3 = face.vertices[2];
+    auto uv = face.texCoords[0];
+    auto uv2 = face.texCoords[1];
+    auto uv3 = face.texCoords[2];
+
+    glm::vec3 tangent {};
+
+    auto edge1 = pos2 - pos;
+    auto edge2 = pos3 - pos;
+    auto deltaUV1 = uv2 - uv;
+    auto deltaUV2 = uv3 - uv;
+
+    float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+    tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+    tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+    tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+    return tangent;
 }
 
