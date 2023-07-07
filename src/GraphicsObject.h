@@ -17,14 +17,18 @@ class GraphicsObject {
 private:
     std::vector<float> buffer;
     unsigned int vao;
+    unsigned int vbo;
     unsigned int vertices;
     unsigned int albedoTexture;
+    unsigned int normalTexture;
 
     void generateVAO();
     void addObjectUniforms();
     std::optional<std::string> albedoTexturePath {};
+    std::optional<std::string> normalTexturePath {};
 public:
     void setAlbedoTexture(std::string path);
+    void setNormalTexture(std::string path);
     GraphicsObject(const GraphicsObject&) = delete;
     GraphicsObject(GraphicsObject&&) = default;
     GraphicsObject& operator=(GraphicsObject&&) = default;
@@ -36,6 +40,8 @@ public:
     void render();
     void raw_render();
     void addObjectUniformsTo(ShaderProgram&, bool applyTextures=false);
+
+    ~GraphicsObject();
 };
 
 

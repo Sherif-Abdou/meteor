@@ -9,11 +9,23 @@ void GeometryPass::render() {
         throw std::runtime_error("Shader program not set");
     }
     glBindFramebuffer(GL_FRAMEBUFFER, gFBO);
-    glViewport(0,0,1920.0f, 1080.0f);
+    glViewport(0,0,(GLsizei)width, (GLsizei)height);
 
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     shaderProgram->applyProgram();
+
+    glm::mat4 modelViewMatrix = glm::mat4(1.0f);
+    modelViewMatrix = glm::translate(modelViewMatrix, -translation);
+
+    modelViewMatrix = glm::rotate(modelViewMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    modelViewMatrix = glm::rotate(modelViewMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    modelViewMatrix = glm::rotate(modelViewMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), width,height, 0.1f, 100.0f);
+
+    shaderProgram->setPerspectiveMatrix(perspectiveMatrix);
+    shaderProgram->setViewMatrix(modelViewMatrix);
 
     for (auto& [name, object] : object_inputs) {
         if (name == "deferred_quad") {
@@ -76,13 +88,6 @@ void GeometryPass::init() {
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, (GLsizei)width, (GLsizei)height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-    glm::mat4 modelViewMatrix = glm::mat4(1.0f);
-    modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0, 0.0, -2.));
-    glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), 1920.0f,1080.0f, 0.1f, 100.0f);
-
-    shaderProgram->setPerspectiveMatrix(perspectiveMatrix);
-    shaderProgram->setViewMatrix(modelViewMatrix);
 
     texture_outputs["position"] = positionTexture;
     texture_outputs["normal"] = normalTexture;

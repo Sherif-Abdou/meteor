@@ -20,6 +20,8 @@ protected:
     std::map<std::string, unsigned int> texture_outputs {};
     std::map<std::string, GraphicsObject*> object_inputs {};
 public:
+    float width = 1920.0f;
+    float height = 1080.0f;
     /// Draw
     virtual void render() = 0;
     /// Generate frame_buffers, textures and other buffers you may need

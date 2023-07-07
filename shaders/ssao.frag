@@ -20,9 +20,9 @@ const float bias = 0.025f;
 void main() {
     vec3 fragPos = texture(position, vTexCoord).xyz;
     vec3 fragNormal = texture(normal, vTexCoord).xyz;
-//    if (fragNormal == vec3(0.0)) {
-//        discard;
-//    }
+    if (fragNormal == vec3(0.0)) {
+        discard;
+    }
     vec3 randomVec = texture(noiseMap, vTexCoord * noiseScale).xyz;
     vec3 tangent = normalize(randomVec - fragNormal * dot(randomVec, fragNormal));
     vec3 bitangent = cross(fragNormal, tangent);

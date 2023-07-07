@@ -42,6 +42,7 @@ void GraphicsObject::generateVAO() {
     glVertexAttribPointer(3, 3, GL_FLOAT, false, 11*sizeof(float), (void*)(6*sizeof(float)));
     glEnableVertexAttribArray(3);
     this->vao = vao;
+    this->vbo = vbo;
 }
 
 void GraphicsObject::render() {
@@ -70,8 +71,17 @@ void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program, bool app
         if (albedoTexturePath.has_value()) {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, albedoTexture);
+            shader_program.addIntegerUniform("albedo", 0);
         } else {
             glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, GL_NONE);
+        }
+        if (normalTexturePath.has_value()) {
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, normalTexture);
+            shader_program.addIntegerUniform("normalMap", 1);
+        } else {
+            glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, GL_NONE);
         }
     }
@@ -90,6 +100,7 @@ void GraphicsObject::setAlbedoTexture(std::string path) {
     albedoTexturePath = std::optional<std::string>(path);
 
     int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(true);
     unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
     glGenTextures(1, &albedoTexture);
     glBindTexture(GL_TEXTURE_2D, albedoTexture);
@@ -100,5 +111,27 @@ void GraphicsObject::setAlbedoTexture(std::string path) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
     stbi_image_free(data);
+}
+
+void GraphicsObject::setNormalTexture(std::string path) {
+    normalTexturePath = std::optional<std::string>(path);
+
+    int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+    glGenTextures(1, &normalTexture);
+    glBindTexture(GL_TEXTURE_2D, normalTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    stbi_image_free(data);
+}
+
+GraphicsObject::~GraphicsObject() {
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vbo);
 }
 

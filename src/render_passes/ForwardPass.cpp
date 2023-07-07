@@ -19,7 +19,7 @@ void ForwardPass::init() {
 }
 
 void ForwardPass::render() {
-    glViewport(0,0,1920.0f,1080.0f);
+    glViewport(0,0,(GLsizei)width,(GLsizei)height);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

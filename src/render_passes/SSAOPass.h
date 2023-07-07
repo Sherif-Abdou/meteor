@@ -13,7 +13,7 @@ private:
     ShaderProgram* shaderProgram;
     ShaderProgram* blurProgram;
     unsigned int fbo = 0;
-    void generateKernalSamples();
+    void generateKernelSamples();
     void generateKernelRotations();
     unsigned int noiseTexture;
     unsigned int blurFbo = 0;

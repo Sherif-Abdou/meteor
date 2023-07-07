@@ -17,6 +17,8 @@ public:
     ShaderProgram &getShader() override;
 
     ~ForwardPass() override;
+    float width = 1920.0f;
+    float height = 1080.0f;
 private:
     ShaderProgram* shader_program{};
 };

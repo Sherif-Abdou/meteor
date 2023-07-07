@@ -20,7 +20,7 @@ void SSAOPass::render() {
 
     auto slot = glGetUniformLocation(shaderProgram->getShaderProgramId(), "raw_samples");
 
-    glViewport(0,0,1920.0f,1080.0f);
+    glViewport(0,0,width,height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto object = object_inputs["deferred_quad"];
@@ -32,7 +32,7 @@ void SSAOPass::render() {
     object->raw_render();
 
     glBindFramebuffer(GL_FRAMEBUFFER, blurFbo);
-    glViewport(0,0,1920.0f,1080.0f);
+    glViewport(0,0,width,height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_outputs["tmp_ssao"]);
@@ -48,9 +48,9 @@ void SSAOPass::init() {
     shaderProgram = new ShaderProgram("shaders/deferred.vert", "shaders/ssao.frag");
     blurProgram = new ShaderProgram("shaders/deferred.vert", "shaders/blur.frag");
 
-    generateKernalSamples();
+    generateKernelSamples();
     generateKernelRotations();
-    glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), 1920.0f,1080.0f, 0.1f, 100.0f);
+    glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), width,height, 0.1f, 100.0f);
     shaderProgram->setPerspectiveMatrix(perspectiveMatrix);
     glm::mat4 modelViewMatrix = glm::mat4(1.0f);
     modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0, 0.0, -2.));
@@ -61,7 +61,7 @@ void SSAOPass::init() {
     unsigned int texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 1920.0f, 1080.0f, 0, GL_RED, GL_FLOAT, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
@@ -72,7 +72,7 @@ void SSAOPass::init() {
     glBindFramebuffer(GL_FRAMEBUFFER, blurFbo);
     glGenTextures(1, &blurTexture);
     glBindTexture(GL_TEXTURE_2D, blurTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 1920.0f, 1080.0f, 0, GL_RED, GL_FLOAT, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurTexture, 0);
@@ -86,7 +86,7 @@ ShaderProgram &SSAOPass::getShader() {
     return *shaderProgram;
 }
 
-void SSAOPass::generateKernalSamples() {
+void SSAOPass::generateKernelSamples() {
     std::uniform_real_distribution<float> randomFloats(0.0, 1.0); // random floats between [0.0, 1.0]
     std::default_random_engine generator;
     generator.seed(2);

@@ -63,6 +63,7 @@ GLFWwindow * initialize_window() {
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Meteor", nullptr, nullptr);
 
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
     int version = gladLoadGL(glfwGetProcAddress);
     if (!version) {
         glfwTerminate();
@@ -117,16 +118,24 @@ int main() {
 //    frame_loop(window, velocity, renderer, shadow_map);
     RenderPipeline pipeline {};
 
-    RenderPass* shadowPass = new ShadowPass(glm::vec3(0.0f, 4.0f, -0.0f));
-    RenderPass* geoPass = new GeometryPass();
-    RenderPass* ssaoPass = new SSAOPass();
-    RenderPass* deferredPass = new DeferredPass();
+    auto* shadowPass = new ShadowPass(glm::vec3(0.0f, 4.0f, -0.0f));
+    shadowPass->width *= 2;
+    shadowPass->height *= 2;
+    auto* geoPass = new GeometryPass();
+    auto* ssaoPass = new SSAOPass();
+    auto* deferredPass = new DeferredPass();
 
     pipeline.graphics_object["main"] = &graphics_body;
     pipeline.graphics_object["main"]->setAlbedoTexture("textures/1001_albedo.jpg");
+    pipeline.graphics_object["main"]->setNormalTexture("textures/1001_normal.png");
     pipeline.graphics_object["second"] = &graphics_body2;
     pipeline.graphics_object["second"]->setAlbedoTexture("textures/red.jpg");
     pipeline.graphics_object["deferred_quad"] = &graphics_body3;
+
+    geoPass->translation.z += 2;
+//    geoPass->translation.y += 2;
+    geoPass->rotation.x += 45.0f;
+
     pipeline.addPass(shadowPass);
     pipeline.addPass(geoPass);
     pipeline.addPass(ssaoPass);
@@ -154,7 +163,6 @@ void frame_loop(GLFWwindow *window, glm::vec3 velocity, RenderPipeline& pipeline
     bool motion = false;
     bool held = false;
     while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
         if (glfwGetKey(window, GLFW_KEY_SPACE)) {
             if (!held) {
                 motion = !motion;
@@ -169,12 +177,14 @@ void frame_loop(GLFWwindow *window, glm::vec3 velocity, RenderPipeline& pipeline
             if (motion) {
                 velocity -= glm::vec3(0.0f * deltaTime, 0.2f * deltaTime, 0.0f * deltaTime);
 //                pipeline.graphics_object["main"]->translation += glm::vec3(deltaTime) * velocity;
-                pipeline.graphics_object["main"]->rotation.y += 45.0f * deltaTime;
+                pipeline.graphics_object["main"]->translation.x += .3f * deltaTime;
                 pipeline.render();
             }
 
             previous_time = current_time;
             glfwSwapBuffers(window);
+            glfwPollEvents();
+//            glFinish();
             frame_counter++;
         }
         if (glfwGetTime() - last_second > 1.0) {

@@ -11,10 +11,17 @@ layout(location = 2) out vec4 gAlbedo;
 layout(location = 3) out vec3 gTangent;
 
 uniform sampler2D albedo;
+uniform sampler2D normalMap;
 
 void main() {
     gPos = vPos;
     gNormal = normalize(vNormal);
     gTangent = normalize(vTangent);
+    vec3 map_normal = texture(normalMap, vTexCoord).rgb;
+    if (map_normal != vec3(0.0, 0.0, 0.0)) {
+        vec3 B = cross(gNormal, gTangent);
+        mat3 TBN = mat3(gTangent, B, gNormal);
+        gNormal = TBN * map_normal;
+    }
     gAlbedo = vec4(texture(albedo, vTexCoord).rgb, 1.0f);
 }
