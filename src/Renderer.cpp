@@ -22,7 +22,6 @@ void Renderer::render_to_window() {
 void Renderer::raw_render(bool custom_shader) {
     for (auto& object: objects) {
         if (!custom_shader) {
-            object.render();
         } else {
             object.raw_render();
         }

@@ -23,7 +23,6 @@ private:
     unsigned int normalTexture;
 
     void generateVAO();
-    void addObjectUniforms();
     std::optional<std::string> albedoTexturePath {};
     std::optional<std::string> normalTexturePath {};
 public:
@@ -35,9 +34,7 @@ public:
     glm::vec3 translation {};
     glm::vec3 rotation {};
     glm::vec3 scale = glm::vec3(1.0f);
-    ShaderProgram& shader_program;
-    explicit GraphicsObject(OBJFile&, ShaderProgram&);
-    void render();
+    explicit GraphicsObject(OBJFile&);
     void raw_render();
     void addObjectUniformsTo(ShaderProgram&, bool applyTextures=false);
 

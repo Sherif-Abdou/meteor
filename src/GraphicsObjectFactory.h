@@ -14,6 +14,7 @@ private:
     OBJFile getOBJFromPath(std::string);
 public:
     GraphicsObject generateFromOBJ(std::string, ShaderProgram&);
+    GraphicsObject* generateFromOBJRaw(std::string);
 };
 
 

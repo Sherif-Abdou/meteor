@@ -6,13 +6,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-GraphicsObject::GraphicsObject(OBJFile& obj, ShaderProgram& shader_program):
-    shader_program{shader_program} {
-    vertices = obj.size();
-    buffer = obj.createBuffer();
-    generateVAO();
-}
-
 void GraphicsObject::generateVAO() {
     long len = buffer.size();
 
@@ -43,14 +36,6 @@ void GraphicsObject::generateVAO() {
     glEnableVertexAttribArray(3);
     this->vao = vao;
     this->vbo = vbo;
-}
-
-void GraphicsObject::render() {
-    shader_program.applyProgram();
-    addObjectUniforms();
-    shader_program.addUniforms();
-
-    raw_render();
 }
 
 void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program, bool applyTextures) {
@@ -85,10 +70,6 @@ void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program, bool app
             glBindTexture(GL_TEXTURE_2D, GL_NONE);
         }
     }
-}
-
-void GraphicsObject::addObjectUniforms() {
-    addObjectUniformsTo(shader_program);
 }
 
 void GraphicsObject::raw_render() {
@@ -135,3 +116,8 @@ GraphicsObject::~GraphicsObject() {
     glDeleteBuffers(1, &vbo);
 }
 
+GraphicsObject::GraphicsObject(OBJFile & obj) {
+    vertices = obj.size();
+    buffer = obj.createBuffer();
+    generateVAO();
+}

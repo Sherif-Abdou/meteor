@@ -7,7 +7,7 @@
 
 GraphicsObject GraphicsObjectFactory::generateFromOBJ(std::string path, ShaderProgram& program) {
     auto obj = getOBJFromPath(path);
-    return GraphicsObject {obj, program};
+    return GraphicsObject {obj};
 }
 
 OBJFile GraphicsObjectFactory::getOBJFromPath(std::string path) {
@@ -18,5 +18,10 @@ OBJFile GraphicsObjectFactory::getOBJFromPath(std::string path) {
     stream.close();
 
     return file;
+}
+
+GraphicsObject *GraphicsObjectFactory::generateFromOBJRaw(std::string path) {
+    auto obj = getOBJFromPath(std::move(path));
+    return new GraphicsObject {obj};
 }
 
