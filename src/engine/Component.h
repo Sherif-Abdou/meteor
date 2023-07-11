@@ -6,15 +6,22 @@
 #define METEOR_COMPONENT_H
 
 #include <string>
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 
 class Entity;
 
 class Component {
+public:
+    struct Context {
+        GLFWwindow* window;
+    };
 protected:
     Entity& entity;
+    Context& context;
 public:
     constexpr static const char* component_name = "component";
-    explicit Component(Entity&);
+    explicit Component(Entity&, Context&);
     virtual void init() = 0;
     virtual void update(float deltaTime) = 0;
     virtual void physics_init() {}

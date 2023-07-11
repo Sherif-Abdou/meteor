@@ -5,14 +5,19 @@
 #include "Transform.h"
 
 glm::mat4 Transform::updateTransformMatrix() {
-    auto transform = glm::mat4();
+    glm::mat4 transform = getRotationMatrix();
     transform = glm::translate(transform, this->position);
-    transform = glm::rotate(transform, glm::radians(eulerAngles.x), glm::vec3(1.0, 0.0, 0.0));
-    transform = glm::rotate(transform, glm::radians(eulerAngles.y), glm::vec3(0.0, 1.0, 0.0));
-    transform = glm::rotate(transform, glm::radians(eulerAngles.z), glm::vec3(0.0, 0.0, 1.0));
     transform = glm::scale(transform, scale);
 
     this->transform = transform;
+    return transform;
+}
+
+glm::mat4 Transform::getRotationMatrix() const {
+    auto transform = glm::identity<glm::mat4>();
+    transform = glm::rotate(transform, glm::radians(eulerAngles.x), glm::vec3(1.0, 0.0, 0.0));
+    transform = glm::rotate(transform, glm::radians(eulerAngles.y), glm::vec3(0.0, 1.0, 0.0));
+    transform = glm::rotate(transform, glm::radians(eulerAngles.z), glm::vec3(0.0, 0.0, 1.0));
     return transform;
 }
 
@@ -45,4 +50,22 @@ void Transform::setScale(const glm::vec3 &scale) {
 
 const glm::mat4 &Transform::getTransform() const {
     return transform;
+}
+
+glm::vec3 Transform::getRight() const {
+    glm::vec4 value = getRotationMatrix() * glm::vec4(right, 1.0f);
+    value /= glm::vec4(value.w);
+    return glm::normalize(glm::vec3 {value});
+}
+
+glm::vec3 Transform::getUp() const {
+    glm::vec4 value = getRotationMatrix() * glm::vec4(up, 1.0f);
+    value /= glm::vec4(value.w);
+    return glm::normalize(glm::vec3 {value});
+}
+
+glm::vec3 Transform::getForward() const {
+    glm::vec4 value = getRotationMatrix() * glm::vec4(forward, 1.0f);
+    value /= glm::vec4(value.w);
+    return glm::normalize(glm::vec3 {value});
 }

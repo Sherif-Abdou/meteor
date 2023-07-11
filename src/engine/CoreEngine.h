@@ -16,11 +16,21 @@ class CoreEngine {
 private:
     void physics_loop();
     bool physics_enabled = true;
+    Component::Context context;
+public:
+    [[nodiscard]] Component::Context &getContext();
+
+private:
+    GLFWwindow* window;
+public:
+    [[nodiscard]] GLFWwindow *getWindow() const;
+
+    void setWindow(GLFWwindow *window);
+
 public:
     std::vector<std::unique_ptr<Entity>> entities {};
     RenderPipeline pipeline {};
     float physicsUpdateFrequency = 240.0f;
-    GLFWwindow* window;
     std::unique_ptr<std::thread> physics_thread;
     void frame_init();
     void frame_loop();

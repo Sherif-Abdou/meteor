@@ -27,6 +27,17 @@ public:
 private:
     glm::vec3 eulerAngles;
     glm::vec3 scale = glm::vec3(1.0f);
+    glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
+public:
+    glm::vec3 getRight() const;
+
+    glm::vec3 getUp() const;
+
+    glm::vec3 getForward() const;
+
+private:
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f);
 
     glm::mat4 transform;
 public:
@@ -34,6 +45,8 @@ public:
 
 private:
     glm::mat4 updateTransformMatrix();
+
+    glm::mat4 getRotationMatrix() const;
 };
 
 

@@ -12,8 +12,8 @@ uniform sampler2D shadowMap;
 uniform sampler2D occlusionMap;
 
 out vec4 color;
-vec3 lightSource = vec3(0.0f, 4.0f, -0.0f);
-vec3 eyeSource = vec3(0.0f, 0.0, 2.0f);
+vec3 lightSource = vec3(0.0f, 2.0f, -0.0f);
+vec3 eyeSource = vec3(0.0f, 0.0, 5.0f);
 
 vec4 specularColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 float ka = 0.3f;
@@ -68,7 +68,7 @@ void main() {
     kd * (1.0 - shadow) * lambertian * diffuseColor +
     ks * (1.0 - shadow) * pow(specular, 256.0f) * specularColor;
 
-//    color = vec4(vec3(ambientOcclusion), 1.0f);
+    color = vec4(vec3(ambientOcclusion), 1.0f);
 
     color.rgb = color.rgb / (color.rgb + vec3(1.0f));
 //    color.rgb = pow(color.rgb, vec3(1/2.2f));

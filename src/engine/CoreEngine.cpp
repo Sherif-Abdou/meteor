@@ -40,7 +40,7 @@ void CoreEngine::frame_loop() {
 Entity& CoreEngine::createEntityFromOBJPath(const std::string & name, const std::string & obj_path) {
     auto entity = std::make_unique<Entity>();
     entity->setName(name);
-    std::unique_ptr<MeshComponent> mesh = std::make_unique<MeshComponent>(*entity, pipeline);
+    std::unique_ptr<MeshComponent> mesh = std::make_unique<MeshComponent>(*entity, context, pipeline);
     mesh->setObjPath(obj_path);
 
     entity->addComponent(std::move(mesh));
@@ -75,4 +75,17 @@ void CoreEngine::physics_loop() {
 void CoreEngine::end_physics() {
     physics_enabled = false;
     physics_thread->join();
+}
+
+GLFWwindow *CoreEngine::getWindow() const {
+    return window;
+}
+
+void CoreEngine::setWindow(GLFWwindow *window) {
+    CoreEngine::window = window;
+    CoreEngine::context.window = window;
+}
+
+Component::Context &CoreEngine::getContext() {
+    return context;
 }

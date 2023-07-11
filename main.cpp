@@ -4,10 +4,7 @@ using std::string;
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <glm/ext.hpp>
 #include <fstream>
-#include <sstream>
-#include "src/OBJFile.h"
 #include "src/ShaderProgram.h"
 #include "src/GraphicsObjectFactory.h"
 #include "src/RenderPipeline.h"
@@ -18,6 +15,7 @@ using std::string;
 #include "src/engine/CoreEngine.h"
 #include "src/engine/Component.h"
 #include "src/engine/components/MeshComponent.h"
+#include "src/engine/components/WASDComponent.h"
 
 constexpr float WIDTH = 1920.0f;
 constexpr float HEIGHT = 1080.0f;
@@ -66,7 +64,7 @@ int main() {
     shader_program.addVec3Uniform("uEyePosition", eyePosition);
 
     auto engine = CoreEngine();
-    engine.window = window;
+    engine.setWindow(window);
 
     auto* shadowPass = new ShadowPass(glm::vec3(0.0f, 4.0f, -0.0f));
     auto* geoPass = new GeometryPass();
@@ -83,8 +81,13 @@ int main() {
     engine.pipeline.addPass(deferredPass);
 
     auto& main_object = engine.createEntityFromOBJPath("main", MODEL);
+//    auto& second_object = engine.createEntityFromOBJPath("second", MODEL2);
+    main_object.addComponent(std::make_unique<WASDComponent>(main_object, engine.getContext()));
     main_object.getComponent<MeshComponent>().setAlbedoPath("textures/1001_albedo.jpg");
-    main_object.getComponent<MeshComponent>().setNormalPath("textures/1001_normal.jpg");
+//    main_object.getComponent<MeshComponent>().setNormalPath("textures/1001_normal.jpg");
+//    second_object.getComponent<MeshComponent>().setAlbedoPath("textures/red.jpg");
+//    second_object.transform.setPosition(second_object.transform.getPosition() + glm::vec3(0.0, -3.0, 0.0));
+//    second_object.transform.setScale(glm::vec3(5.0f));
 
     engine.frame_init();
     engine.start_physics();

@@ -14,14 +14,14 @@ uniform mat4 uPerspective;
 uniform mat4 uModelView;
 
 const vec2 noiseScale = vec2(1920.0/4.0, 1080.0/4.0);
-const float radius = 0.5f;
+const float radius = 0.1f;
 const float bias = 0.025f;
 
 void main() {
     vec3 fragPos = texture(position, vTexCoord).xyz;
     vec3 fragNormal = texture(normal, vTexCoord).xyz;
     if (fragNormal == vec3(0.0)) {
-        discard;
+//        discard;
     }
     vec3 randomVec = texture(noiseMap, vTexCoord * noiseScale).xyz;
     vec3 tangent = normalize(randomVec - fragNormal * dot(randomVec, fragNormal));
@@ -42,6 +42,7 @@ void main() {
 //            continue;
 //        }
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
+//        float rangeCheck = 1.0f;
         occlusion += (sampleDepth >= samplePosition.z + bias ? 1.0 : 0.0) * rangeCheck ;
 //        color = vec4(sampleDepth);
     }

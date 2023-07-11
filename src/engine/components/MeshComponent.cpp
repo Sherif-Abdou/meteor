@@ -22,7 +22,7 @@ void MeshComponent::init() {
 void MeshComponent::update(float deltaTime) {
     graphics_object->translation = entity.transform.getPosition();
     graphics_object->rotation = entity.transform.getEulerAngles();
-    graphics_object->rotation *= glm::vec3(M_PI / 180.0f);
+//    graphics_object->rotation *= glm::vec3(M_PI / 180.0f);
     graphics_object->scale = entity.transform.getScale();
 }
 
@@ -50,11 +50,10 @@ void MeshComponent::setObjPath(const std::string &objPath) {
     obj_path = objPath;
 }
 
-MeshComponent::MeshComponent(Entity & entity, RenderPipeline & pipeline): Component(entity), pipeline(pipeline) {
+MeshComponent::MeshComponent(Entity & entity, Context & context, RenderPipeline & pipeline): Component(entity, context), pipeline(pipeline) {
 }
 
-MeshComponent::~MeshComponent() {
-}
+MeshComponent::~MeshComponent() = default;
 
 const char *MeshComponent::getComponentName() {
     return "mesh_component";

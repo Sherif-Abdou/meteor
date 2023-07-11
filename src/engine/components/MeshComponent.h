@@ -34,8 +34,10 @@ public:
     void setObjPath(const std::string &objPath);
 
     void init() override;
+
+
     void update(float deltaTime) override;
-    explicit MeshComponent(Entity&, RenderPipeline&);
+    explicit MeshComponent(Entity&, Context&, RenderPipeline&);
     ~MeshComponent() override;
 
     const char *getComponentName() override;

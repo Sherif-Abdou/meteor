@@ -4,5 +4,6 @@
 
 #include "Component.h"
 
-Component::Component(Entity& entity): entity(entity) {
+Component::Component(Entity& entity, Context& context): entity(entity), context(context) {
+
 }
