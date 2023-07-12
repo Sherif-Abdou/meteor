@@ -16,6 +16,7 @@ using std::string;
 #include "src/engine/Component.h"
 #include "src/engine/components/MeshComponent.h"
 #include "src/engine/components/WASDComponent.h"
+#include "src/render_passes/SkyboxPass.h"
 
 constexpr float WIDTH = 1920.0f;
 constexpr float HEIGHT = 1080.0f;
@@ -59,6 +60,7 @@ int main() {
     auto graphics_body_factory = GraphicsObjectFactory();
 
     auto deferred_quad_body = graphics_body_factory.generateFromOBJ("models/quad.obj", shader_program);
+    auto skybox_cube_body = graphics_body_factory.generateFromOBJ("models/cube.obj", shader_program);
 
 
     shader_program.addVec3Uniform("uEyePosition", eyePosition);
@@ -71,23 +73,29 @@ int main() {
     geoPass->translation = glm::vec3(0.0f, 0.0f, 5.0f);
     auto* ssaoPass = new SSAOPass();
     auto* deferredPass = new DeferredPass();
+    auto* skyboxPass = new SkyboxPass();
+    std::string str = "textures/new_sky.jpg";
+    std::string arr[6] = {str, str, str, str, str, str};
+    skyboxPass->setSkyboxPaths(arr);
 
     engine.pipeline.graphics_object["deferred_quad"] = &deferred_quad_body;
+    engine.pipeline.graphics_object["skybox_cube"] = &skybox_cube_body;
 
 
     engine.pipeline.addPass(shadowPass);
     engine.pipeline.addPass(geoPass);
     engine.pipeline.addPass(ssaoPass);
     engine.pipeline.addPass(deferredPass);
+    engine.pipeline.addPass(skyboxPass);
 
     auto& main_object = engine.createEntityFromOBJPath("main", MODEL);
-//    auto& second_object = engine.createEntityFromOBJPath("second", MODEL2);
+    auto& second_object = engine.createEntityFromOBJPath("second", MODEL2);
     main_object.addComponent(std::make_unique<WASDComponent>(main_object, engine.getContext()));
     main_object.getComponent<MeshComponent>().setAlbedoPath("textures/1001_albedo.jpg");
-//    main_object.getComponent<MeshComponent>().setNormalPath("textures/1001_normal.jpg");
-//    second_object.getComponent<MeshComponent>().setAlbedoPath("textures/red.jpg");
-//    second_object.transform.setPosition(second_object.transform.getPosition() + glm::vec3(0.0, -3.0, 0.0));
-//    second_object.transform.setScale(glm::vec3(5.0f));
+    main_object.getComponent<MeshComponent>().setNormalPath("textures/1001_normal.jpg");
+    second_object.getComponent<MeshComponent>().setAlbedoPath("textures/red.jpg");
+    second_object.transform.setPosition(second_object.transform.getPosition() + glm::vec3(0.0, -3.0, 0.0));
+    second_object.transform.setScale(glm::vec3(5.0f));
 
     engine.frame_init();
     engine.start_physics();

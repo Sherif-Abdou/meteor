@@ -50,10 +50,10 @@ void SSAOPass::init() {
 
     generateKernelSamples();
     generateKernelRotations();
-    glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), width,height, 0.1f, 10.0f);
+    glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), width,height, 0.1f, 100.0f);
     shaderProgram->setPerspectiveMatrix(perspectiveMatrix);
     glm::mat4 modelViewMatrix = glm::mat4(1.0f);
-    modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0, 0.0, -2.));
+    modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0, 0.0, -5.));
     shaderProgram->setViewMatrix(modelViewMatrix);
 
     glGenFramebuffers(1, &fbo);
@@ -89,7 +89,6 @@ ShaderProgram &SSAOPass::getShader() {
 void SSAOPass::generateKernelSamples() {
     std::uniform_real_distribution<float> randomFloats(0.0, 1.0); // random floats between [0.0, 1.0]
     std::default_random_engine generator;
-    generator.seed(2);
     for (unsigned int i = 0; i < 64; ++i)
     {
         glm::vec3 sample(
@@ -113,11 +112,13 @@ float SSAOPass::lerp(float a, float b, float f) {
 }
 
 void SSAOPass::generateKernelRotations() {
+    const int width = 4;
+    const int height = 4;
     std::vector<glm::vec3> ssaoNoise;
     std::uniform_real_distribution<float> randomFloats(0.0, 1.0); // random floats between [0.0, 1.0]
     std::default_random_engine generator;
     generator.seed(2);
-    for (unsigned int i = 0; i < 16; i++)
+    for (unsigned int i = 0; i < width * height; i++)
     {
         glm::vec3 noise(
                 randomFloats(generator) * 2.0 - 1.0,
@@ -127,7 +128,7 @@ void SSAOPass::generateKernelRotations() {
     }
     glGenTextures(1, &noiseTexture);
     glBindTexture(GL_TEXTURE_2D, noiseTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, 4, 4, 0, GL_RGB, GL_FLOAT, &ssaoNoise[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_FLOAT, &ssaoNoise[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

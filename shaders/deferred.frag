@@ -10,6 +10,7 @@ uniform sampler2D albedo;
 uniform sampler2D tangent;
 uniform sampler2D shadowMap;
 uniform sampler2D occlusionMap;
+uniform samplerCube skyboxMap;
 
 out vec4 color;
 vec3 lightSource = vec3(0.0f, 2.0f, -0.0f);
@@ -29,9 +30,7 @@ float shadow_calculation(vec4 light_space_coord) {
 
     vec3 vNormal = texture(normal, vTexCoord).xyz;
     float bias = max(0.05 * (1.0 - vNormal.y), 0.005);
-//    float bias = 0.005;
     float shadow = currentDepth - bias > closestDepth ? 0.8 : 0.0;
-    //    color = vec4(currentDepth - closestDepth);
 
     if (projCoord.z > 1.0) {
         shadow = 0.0;
@@ -44,11 +43,11 @@ void main() {
     vec3 vPos = texture(position, vTexCoord).xyz;
     vec3 vNormal = texture(normal, vTexCoord).xyz;
 
-    if (vNormal == vec3(0.0, 0.0, 0.0)) {
+    if (vNormal == vec3(0.0)) {
+        // Should probably include uModelView here
         discard;
     }
     float ambientOcclusion = texture(occlusionMap, vTexCoord).r;
-//    ambientOcclusion = 1.0f;
 
     vec3 delta = normalize(lightSource-vPos);
     float length = length(lightSource-vPos);
@@ -61,15 +60,12 @@ void main() {
     float aks = ks * attentuation;
 
     float shadow = shadow_calculation(uLightSpaceMatrix * vec4(vPos, 1.0f));
-//    float shadow = 0.0;
 
     color =
     ka * ambientOcclusion * diffuseColor +
     kd * (1.0 - shadow) * lambertian * diffuseColor +
     ks * (1.0 - shadow) * pow(specular, 256.0f) * specularColor;
 
-    color = vec4(vec3(ambientOcclusion), 1.0f);
 
     color.rgb = color.rgb / (color.rgb + vec3(1.0f));
-//    color.rgb = pow(color.rgb, vec3(1/2.2f));
 }

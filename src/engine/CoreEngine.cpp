@@ -7,10 +7,10 @@
 #include "components/MeshComponent.h"
 
 void CoreEngine::frame_init() {
+    pipeline.init();
     for (auto& entity: entities) {
         entity->init();
     }
-    pipeline.init();
 }
 
 void CoreEngine::frame_loop() {

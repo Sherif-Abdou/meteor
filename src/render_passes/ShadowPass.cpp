@@ -48,7 +48,7 @@ void ShadowPass::render() {
     shader_program->setPerspectiveMatrix(lightProjection);
     shader_program->setViewMatrix(lightModelView);
     for (auto& [name, object] : object_inputs) {
-        if (name == "deferred_quad") {
+        if (name == "deferred_quad" || name == "skybox_cube") {
             continue;
         }
         object->addObjectUniformsTo(*shader_program);

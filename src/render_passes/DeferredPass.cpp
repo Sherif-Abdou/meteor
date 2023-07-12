@@ -2,7 +2,9 @@
 // Created by sheri on 6/26/2023.
 //
 
+#include <iostream>
 #include "DeferredPass.h"
+#include "stb_image.h"
 
 void DeferredPass::render() {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -11,21 +13,27 @@ void DeferredPass::render() {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_inputs["position"]);
     shaderProgram->addIntegerUniform("position", 0);
+
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture_inputs["normal"]);
     shaderProgram->addIntegerUniform("normal", 1);
+
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, texture_inputs["albedo"]);
     shaderProgram->addIntegerUniform("albedo", 2);
+
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, texture_inputs["shadow_map"]);
     shaderProgram->addIntegerUniform("shadowMap", 3);
+
     glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_2D, texture_inputs["tangent"]);
     shaderProgram->addIntegerUniform("tangent", 4);
+
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, texture_inputs["ssao"]);
     shaderProgram->addIntegerUniform("occlusionMap", 5);
+
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     auto object = object_inputs["deferred_quad"];

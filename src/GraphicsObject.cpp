@@ -68,6 +68,7 @@ void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program, bool app
         } else {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, GL_NONE);
+            glActiveTexture(GL_TEXTURE0);
         }
     }
 }

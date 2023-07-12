@@ -14,7 +14,7 @@ uniform mat4 uPerspective;
 uniform mat4 uModelView;
 
 const vec2 noiseScale = vec2(1920.0/4.0, 1080.0/4.0);
-const float radius = 0.1f;
+const float radius = 0.5f;
 const float bias = 0.025f;
 
 void main() {
@@ -34,7 +34,7 @@ void main() {
         vec3 samplePosition = TBN * raw_sample;
         samplePosition = fragPos + samplePosition * radius;
         vec4 offset = vec4(samplePosition, 1.0f);
-        offset = uPerspective * offset;
+        offset = uPerspective * uModelView * offset;
         offset.xyz /= offset.w;
         offset.xyz = offset.xyz*0.5 + 0.5;
         float sampleDepth = texture(position, offset.xy).z;
