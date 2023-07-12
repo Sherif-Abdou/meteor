@@ -13,8 +13,6 @@ private:
     unsigned int gFBO = 0;
     ShaderProgram* shaderProgram = nullptr;
 public:
-    glm::vec3 translation {};
-    glm::vec3 rotation {};
     void render() override;
 
     void init() override;

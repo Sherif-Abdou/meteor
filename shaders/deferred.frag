@@ -66,6 +66,5 @@ void main() {
     kd * (1.0 - shadow) * lambertian * diffuseColor +
     ks * (1.0 - shadow) * pow(specular, 256.0f) * specularColor;
 
-
     color.rgb = color.rgb / (color.rgb + vec3(1.0f));
 }

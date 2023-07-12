@@ -50,11 +50,6 @@ void SSAOPass::init() {
 
     generateKernelSamples();
     generateKernelRotations();
-    glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), width,height, 0.1f, 100.0f);
-    shaderProgram->setPerspectiveMatrix(perspectiveMatrix);
-    glm::mat4 modelViewMatrix = glm::mat4(1.0f);
-    modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0, 0.0, -5.));
-    shaderProgram->setViewMatrix(modelViewMatrix);
 
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);

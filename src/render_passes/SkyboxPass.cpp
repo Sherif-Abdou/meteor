@@ -16,6 +16,10 @@ void SkyboxPass::render() {
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
     auto object = object_inputs["skybox_cube"];
 
+
+    glm::mat4 modelViewMatrix = skybox_shader->getViewMatrix();
+    skybox_shader->setViewMatrix(glm::mat4(glm::mat3(modelViewMatrix)));
+
     skybox_shader->applyProgram();
     object->addObjectUniformsTo(*skybox_shader);
     skybox_shader->addUniforms();
@@ -24,12 +28,6 @@ void SkyboxPass::render() {
 
 void SkyboxPass::init() {
     skybox_shader = new ShaderProgram("shaders/skybox.vert", "shaders/skybox.frag");
-
-    glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), width,height, 0.01f, 10.0f);
-    skybox_shader->setPerspectiveMatrix(perspectiveMatrix);
-    glm::mat4 modelViewMatrix = glm::mat4(1.0f);
-//    modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0, 0.0, -5.));
-    skybox_shader->setViewMatrix(modelViewMatrix);
 
     glGenTextures(1, &skybox);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);

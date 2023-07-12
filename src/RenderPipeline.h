@@ -17,6 +17,20 @@ private:
 
     void addTexturesToRenderPass(RenderPass&);
     void addObjectsToRenderPass(RenderPass&);
+    glm::vec3 camera_translation;
+
+    void calculateMatrices();
+public:
+    const glm::vec3 &getCameraTranslation() const;
+
+    void setCameraTranslation(const glm::vec3 &cameraTranslation);
+
+    const glm::vec3 &getCameraRotation() const;
+
+    void setCameraRotation(const glm::vec3 &cameraRotation);
+
+private:
+    glm::vec3 camera_rotation;
 public:
     std::map<std::string, GraphicsObject*> graphics_object {};
     std::map<std::string, unsigned int> textures {};

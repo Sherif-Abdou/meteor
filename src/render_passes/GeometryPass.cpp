@@ -15,18 +15,6 @@ void GeometryPass::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     shaderProgram->applyProgram();
 
-    glm::mat4 modelViewMatrix = glm::mat4(1.0f);
-    modelViewMatrix = glm::translate(modelViewMatrix, -translation);
-
-    modelViewMatrix = glm::rotate(modelViewMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    modelViewMatrix = glm::rotate(modelViewMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    modelViewMatrix = glm::rotate(modelViewMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-    glm::mat4 perspectiveMatrix = glm::perspectiveFov(glm::radians(90.0f), width,height, 0.1f, 100.0f);
-
-    shaderProgram->setPerspectiveMatrix(perspectiveMatrix);
-    shaderProgram->setViewMatrix(modelViewMatrix);
-
     for (auto& [name, object] : object_inputs) {
         if (name == "deferred_quad" || name == "skybox_cube") {
             continue;

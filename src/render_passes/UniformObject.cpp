@@ -14,4 +14,6 @@ void UniformObject::addToShader(ShaderProgram & shaderProgram) {
     for (auto [name, number] : intUniforms) {
         shaderProgram.addIntegerUniform(name, number);
     }
+    shaderProgram.setPerspectiveMatrix(projectionMatrix);
+    shaderProgram.setViewMatrix(viewMatrix);
 }

@@ -21,7 +21,7 @@ using std::string;
 constexpr float WIDTH = 1920.0f;
 constexpr float HEIGHT = 1080.0f;
 
-const string MODEL = "models/super_backpack.obj";
+const string MODEL = "models/monkey.obj";
 
 const string MODEL2 = "models/background.obj";
 const glm::vec3 eyePosition = glm::vec3(0.0, 0.0, 5.0f);
@@ -70,13 +70,14 @@ int main() {
 
     auto* shadowPass = new ShadowPass(glm::vec3(0.0f, 4.0f, -0.0f));
     auto* geoPass = new GeometryPass();
-    geoPass->translation = glm::vec3(0.0f, 0.0f, 5.0f);
     auto* ssaoPass = new SSAOPass();
     auto* deferredPass = new DeferredPass();
     auto* skyboxPass = new SkyboxPass();
     std::string str = "textures/new_sky.jpg";
     std::string arr[6] = {str, str, str, str, str, str};
     skyboxPass->setSkyboxPaths(arr);
+    engine.pipeline.uniforms.projectionMatrix = glm::perspectiveFov(glm::radians(90.f), 1920.0f, 1080.0f, 0.1f, 100.0f);
+    engine.pipeline.setCameraTranslation({0.0f, 0.0f, -10.0f});
 
     engine.pipeline.graphics_object["deferred_quad"] = &deferred_quad_body;
     engine.pipeline.graphics_object["skybox_cube"] = &skybox_cube_body;
