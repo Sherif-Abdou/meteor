@@ -17,6 +17,7 @@ using std::string;
 #include "src/engine/components/MeshComponent.h"
 #include "src/engine/components/WASDComponent.h"
 #include "src/render_passes/SkyboxPass.h"
+#include "src/render_passes/SSRPass.h"
 
 constexpr float WIDTH = 1920.0f;
 constexpr float HEIGHT = 1080.0f;
@@ -72,6 +73,7 @@ int main() {
     auto* shadowPass = new ShadowPass(glm::vec3(0.0f, 4.0f, -0.0f));
     auto* geoPass = new GeometryPass();
     auto* ssaoPass = new SSAOPass();
+    auto* ssrPass = new SSRPass();
     auto* deferredPass = new DeferredPass();
     auto* skyboxPass = new SkyboxPass();
     std::string str = "textures/new_sky.jpg";
@@ -86,6 +88,7 @@ int main() {
 
     engine.pipeline.addPass(shadowPass);
     engine.pipeline.addPass(geoPass);
+    engine.pipeline.addPass(ssrPass);
     engine.pipeline.addPass(ssaoPass);
     engine.pipeline.addPass(deferredPass);
     engine.pipeline.addPass(skyboxPass);
@@ -94,6 +97,7 @@ int main() {
     auto& second_object = engine.createEntityFromOBJPath("second", MODEL2);
     main_object.addComponent(std::make_unique<WASDComponent>(main_object, engine.getContext()));
     main_object.getComponent<MeshComponent>().setAlbedoPath("textures/1001_albedo.jpg");
+    main_object.transform.setPosition(glm::vec3(0.0, 0.0, -8.0));
     main_object.getComponent<MeshComponent>().setNormalPath("textures/1001_normal.png");
     second_object.getComponent<MeshComponent>().setAlbedoPath("textures/red.jpg");
     second_object.transform.setPosition(second_object.transform.getPosition() + glm::vec3(0.0, -3.0, 0.0));

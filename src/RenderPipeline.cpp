@@ -63,10 +63,10 @@ void RenderPipeline::setCameraRotation(const glm::vec3 &cameraRotation) {
 
 void RenderPipeline::calculateMatrices() {
     auto viewMatrix = glm::mat4(1.0f);
-    viewMatrix = glm::translate(viewMatrix, getCameraTranslation());
     viewMatrix = glm::rotate(viewMatrix, glm::radians(camera_rotation.x), glm::vec3(1, 0, 0));
     viewMatrix = glm::rotate(viewMatrix, glm::radians(camera_rotation.y), glm::vec3(0, 1, 0));
     viewMatrix = glm::rotate(viewMatrix, glm::radians(camera_rotation.z), glm::vec3(0, 0, 1));
+    viewMatrix = glm::translate(viewMatrix, getCameraTranslation());
     uniforms.viewMatrix = viewMatrix;
 }
 

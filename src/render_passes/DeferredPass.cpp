@@ -34,6 +34,10 @@ void DeferredPass::render() {
     glBindTexture(GL_TEXTURE_2D, texture_inputs["ssao"]);
     shaderProgram->addIntegerUniform("occlusionMap", 5);
 
+    glActiveTexture(GL_TEXTURE6);
+    glBindTexture(GL_TEXTURE_2D, texture_inputs["ssr"]);
+    shaderProgram->addIntegerUniform("reflectionMap", 6);
+
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     auto object = object_inputs["deferred_quad"];

@@ -1,0 +1,26 @@
+//
+// Created by sheri on 7/13/2023.
+//
+
+#ifndef METEOR_SSRPASS_H
+#define METEOR_SSRPASS_H
+
+
+#include "RenderPass.h"
+
+class SSRPass: public RenderPass {
+private:
+    ShaderProgram* shaderProgram;
+    unsigned int fbo;
+public:
+    void render() override;
+
+    void init() override;
+
+    ShaderProgram &getShader() override;
+
+    ~SSRPass() override;
+};
+
+
+#endif //METEOR_SSRPASS_H

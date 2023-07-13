@@ -24,11 +24,15 @@ void Camera::setCameraRotation(glm::vec3 rotation) {
 
 void Camera::updatePipelineMatrices() {
     pipeline.setCameraTranslation(getTransform().getPosition());
-    pipeline.setCameraRotation(getTransform().getEulerAngles());
+    pipeline.setCameraRotation(-getTransform().getEulerAngles());
 }
 
 Camera::Camera(RenderPipeline &pipeline) : pipeline(pipeline) {}
 
 glm::vec3 Camera::getPosition() const {
     return transform.getPosition();
+}
+
+glm::vec3 Camera::getRotation() const {
+    return transform.getEulerAngles();
 }

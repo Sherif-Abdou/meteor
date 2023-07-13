@@ -10,7 +10,7 @@ uniform sampler2D albedo;
 uniform sampler2D tangent;
 uniform sampler2D shadowMap;
 uniform sampler2D occlusionMap;
-uniform samplerCube skyboxMap;
+uniform sampler2D reflectionMap;
 
 uniform mat4 uModelView;
 
@@ -21,7 +21,7 @@ vec3 eyeSource = uEyePosition;
 vec4 specularColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 float ka = 0.3f;
 float kd = 0.7f;
-float ks = 0.8f;
+float ks = 0.3f;
 
 float shadow_calculation(vec4 light_space_coord) {
     vec3 projCoord = light_space_coord.xyz / light_space_coord.w;
@@ -49,6 +49,7 @@ void main() {
         discard;
     }
     float ambientOcclusion = texture(occlusionMap, vTexCoord).r;
+    vec4 ssrReflection = texture(reflectionMap, vTexCoord).rgba;
 
     vec3 delta = normalize(lightSource-vPos);
     float length = length(lightSource-vPos);
@@ -66,6 +67,11 @@ void main() {
     ka * ambientOcclusion * diffuseColor +
     kd * (1.0 - shadow) * lambertian * diffuseColor +
     ks * (1.0 - shadow) * pow(specular, 256.0f) * specularColor;
+
+    if (ssrReflection.a > 0) {
+        color = mix(color, vec4(ssrReflection), 0.1);
+    }
+//    color = ssrReflection;
 
     color.rgb = color.rgb / (color.rgb + vec3(1.0f));
 }

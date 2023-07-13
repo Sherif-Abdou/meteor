@@ -18,27 +18,28 @@ const char *WASDComponent::getComponentName() {
 
 void WASDComponent::physics_update(float deltaTime) {
     auto position = context.camera->getPosition();
+    auto& camera_transform = context.camera->getTransform();
     if (glfwGetKey(context.window, GLFW_KEY_W)) {
-        position += sensitivity * deltaTime * entity.transform.getForward();
+        position += sensitivity * deltaTime * camera_transform.getForward();
     }
     if (glfwGetKey(context.window, GLFW_KEY_S)) {
-        position -= sensitivity * deltaTime * entity.transform.getForward();
+        position -= sensitivity * deltaTime * camera_transform.getForward();
     }
     if (glfwGetKey(context.window, GLFW_KEY_D)) {
-        position += sensitivity * deltaTime * entity.transform.getRight();
+        position += sensitivity * deltaTime * camera_transform.getRight();
     }
     if (glfwGetKey(context.window, GLFW_KEY_A)) {
-        position -= sensitivity * deltaTime * entity.transform.getRight();
+        position -= sensitivity * deltaTime * camera_transform.getRight();
     }
     if (glfwGetKey(context.window, GLFW_KEY_SPACE)) {
-        position += sensitivity * deltaTime * entity.transform.getUp();
+        position += sensitivity * deltaTime * camera_transform.getUp();
     }
     if (glfwGetKey(context.window, GLFW_KEY_LEFT_SHIFT)) {
-        position -= sensitivity * deltaTime * entity.transform.getUp();
+        position -= sensitivity * deltaTime * camera_transform.getUp();
     }
     context.camera->setCameraPosition(position);
 
-    auto rotation = context.camera->getTransform().getEulerAngles();
+    auto rotation = context.camera->getRotation();
 
     if (glfwGetKey(context.window, GLFW_KEY_Q)) {
         rotation.y += -sensitivity * deltaTime * 30.0f;
