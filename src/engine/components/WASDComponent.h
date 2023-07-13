@@ -10,7 +10,7 @@
 
 class WASDComponent: public Component {
 public:
-    float sensitivity = 0.7f;
+    float sensitivity = -0.7f;
     WASDComponent(Entity &entity, Context &context);
 
     void init() override;

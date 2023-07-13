@@ -16,12 +16,18 @@ class CoreEngine {
 private:
     void physics_loop();
     bool physics_enabled = true;
-    Component::Context context;
+    Component::Context context {};
 public:
+    explicit CoreEngine();
+
     [[nodiscard]] Component::Context &getContext();
 
 private:
-    GLFWwindow* window;
+    GLFWwindow* window = nullptr;
+    Camera* camera;
+public:
+    Camera *getCamera() const;
+
 public:
     [[nodiscard]] GLFWwindow *getWindow() const;
 
@@ -37,6 +43,8 @@ public:
     void start_physics();
     void end_physics();
     Entity& createEntityFromOBJPath(const std::string&, const std::string&);
+
+    virtual ~CoreEngine();
 };
 
 

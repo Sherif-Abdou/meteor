@@ -21,7 +21,7 @@ void main() {
     vec3 fragPos = texture(position, vTexCoord).xyz;
     vec3 fragNormal = texture(normal, vTexCoord).xyz;
     if (fragNormal == vec3(0.0)) {
-//        discard;
+        discard;
     }
     vec3 randomVec = texture(noiseMap, vTexCoord * noiseScale).xyz;
     vec3 tangent = normalize(randomVec - fragNormal * dot(randomVec, fragNormal));
@@ -34,13 +34,11 @@ void main() {
         vec3 samplePosition = TBN * raw_sample;
         samplePosition = fragPos + samplePosition * radius;
         vec4 offset = vec4(samplePosition, 1.0f);
-        offset = uPerspective * uModelView * offset;
+        offset = uPerspective * offset;
         offset.xyz /= offset.w;
         offset.xyz = offset.xyz*0.5 + 0.5;
-        float sampleDepth = texture(position, offset.xy).z;
-//        if (texture(normal, offset.xy).xyz == vec3(0.0)) {
-//            continue;
-//        }
+        vec4 other_coord = texture(position, offset.xy);
+        float sampleDepth = other_coord.z;
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
 //        float rangeCheck = 1.0f;
         occlusion += (sampleDepth >= samplePosition.z + bias ? 1.0 : 0.0) * rangeCheck ;

@@ -21,7 +21,7 @@ using std::string;
 constexpr float WIDTH = 1920.0f;
 constexpr float HEIGHT = 1080.0f;
 
-const string MODEL = "models/monkey.obj";
+const string MODEL = "models/super_backpack.obj";
 
 const string MODEL2 = "models/background.obj";
 const glm::vec3 eyePosition = glm::vec3(0.0, 0.0, 5.0f);
@@ -46,6 +46,7 @@ GLFWwindow * initialize_window() {
     glEnable(GL_FRAMEBUFFER_SRGB);
     glEnable(GL_CULL_FACE);
     glfwWindowHint(GL_SAMPLES, 4);
+    glfwSwapInterval(1);
     glEnable(GL_MULTISAMPLE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     return window;
@@ -77,7 +78,7 @@ int main() {
     std::string arr[6] = {str, str, str, str, str, str};
     skyboxPass->setSkyboxPaths(arr);
     engine.pipeline.uniforms.projectionMatrix = glm::perspectiveFov(glm::radians(90.f), 1920.0f, 1080.0f, 0.1f, 100.0f);
-    engine.pipeline.setCameraTranslation({0.0f, 0.0f, -10.0f});
+    engine.getCamera()->setCameraPosition({0.0f, 0.0f, -5.0f});
 
     engine.pipeline.graphics_object["deferred_quad"] = &deferred_quad_body;
     engine.pipeline.graphics_object["skybox_cube"] = &skybox_cube_body;
@@ -93,7 +94,7 @@ int main() {
     auto& second_object = engine.createEntityFromOBJPath("second", MODEL2);
     main_object.addComponent(std::make_unique<WASDComponent>(main_object, engine.getContext()));
     main_object.getComponent<MeshComponent>().setAlbedoPath("textures/1001_albedo.jpg");
-    main_object.getComponent<MeshComponent>().setNormalPath("textures/1001_normal.jpg");
+    main_object.getComponent<MeshComponent>().setNormalPath("textures/1001_normal.png");
     second_object.getComponent<MeshComponent>().setAlbedoPath("textures/red.jpg");
     second_object.transform.setPosition(second_object.transform.getPosition() + glm::vec3(0.0, -3.0, 0.0));
     second_object.transform.setScale(glm::vec3(5.0f));

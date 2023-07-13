@@ -8,6 +8,7 @@
 #include <string>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include "Camera.h"
 
 class Entity;
 
@@ -15,6 +16,7 @@ class Component {
 public:
     struct Context {
         GLFWwindow* window;
+        Camera* camera;
     };
 protected:
     Entity& entity;

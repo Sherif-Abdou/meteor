@@ -59,6 +59,9 @@ void CoreEngine::start_physics() {
 void CoreEngine::physics_loop() {
     auto previous_time = glfwGetTime();
     auto current_time = glfwGetTime();
+    auto previous_second_time = glfwGetTime();
+
+    unsigned int ticks = 0;
 
     while (this->physics_enabled) {
         current_time = glfwGetTime();
@@ -66,8 +69,14 @@ void CoreEngine::physics_loop() {
             for (auto& entity: entities) {
                 entity->physics_update(current_time - previous_time);
             }
+            ticks++;
 
             previous_time = current_time;
+        }
+        if (current_time - previous_second_time > 1.0) {
+            std::cout << "TPS: " << ticks << "\n";
+            ticks = 0;
+            previous_second_time = current_time;
         }
     }
 }
@@ -88,4 +97,18 @@ void CoreEngine::setWindow(GLFWwindow *window) {
 
 Component::Context &CoreEngine::getContext() {
     return context;
+}
+
+CoreEngine::CoreEngine() {
+    camera = new Camera(pipeline);
+    context.camera = camera;
+}
+
+CoreEngine::~CoreEngine() {
+    context.camera = nullptr;
+    delete camera;
+}
+
+Camera *CoreEngine::getCamera() const {
+    return camera;
 }

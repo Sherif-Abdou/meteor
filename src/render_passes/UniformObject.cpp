@@ -16,4 +16,5 @@ void UniformObject::addToShader(ShaderProgram & shaderProgram) {
     }
     shaderProgram.setPerspectiveMatrix(projectionMatrix);
     shaderProgram.setViewMatrix(viewMatrix);
+    shaderProgram.addMatrix4Uniform("uNormalView", glm::inverseTranspose(viewMatrix));
 }

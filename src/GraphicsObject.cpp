@@ -51,6 +51,8 @@ void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program, bool app
 
     shader_program.addMatrix4Uniform("uTransform", transformMatrix);
     shader_program.addMatrix4Uniform("uNormalTransform", normalTransform);
+//    shader_program.addIntegerUniform("albedo", 0);
+//    shader_program.addIntegerUniform("normalMap", 1);
 
     if (applyTextures) {
         if (albedoTexturePath.has_value()) {
@@ -62,13 +64,14 @@ void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program, bool app
             glBindTexture(GL_TEXTURE_2D, GL_NONE);
         }
         if (normalTexturePath.has_value()) {
+            shader_program.addIntegerUniform("normalMapUsed", true);
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, normalTexture);
             shader_program.addIntegerUniform("normalMap", 1);
         } else {
+            shader_program.addIntegerUniform("normalMapUsed", false);
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, GL_NONE);
-            glActiveTexture(GL_TEXTURE0);
         }
     }
 }

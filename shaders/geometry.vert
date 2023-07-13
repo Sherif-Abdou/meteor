@@ -16,12 +16,13 @@ uniform mat4 uPerspective;
 uniform vec3 uEyePosition;
 uniform mat4 uTransform;
 uniform mat4 uNormalTransform;
+uniform mat4 uNormalView;
 uniform mat4 uLightSpaceMatrix;
 
 void main() {
     gl_Position = uPerspective * uModelView * uTransform * vec4(aPos, 1.0f);
-    vPos = vec3(uTransform * vec4(aPos, 1.0f));
-    vNormal = vec3(uNormalTransform * vec4(aNormal, 1.0f));
-    vTangent = vec3(uTransform * vec4(aTangent, 1.0f));
+    vPos = vec3(uModelView * uTransform * vec4(aPos, 1.0f));
+    vNormal = vec3(uNormalView * uNormalTransform * vec4(aNormal, 1.0f));
+    vTangent = vec3(uModelView * uTransform * vec4(aTangent, 1.0f));
     vTexCoord = aTexCoord;
 }

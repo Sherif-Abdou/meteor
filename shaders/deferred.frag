@@ -12,13 +12,15 @@ uniform sampler2D shadowMap;
 uniform sampler2D occlusionMap;
 uniform samplerCube skyboxMap;
 
+uniform mat4 uModelView;
+
 out vec4 color;
 vec3 lightSource = vec3(0.0f, 2.0f, -0.0f);
-vec3 eyeSource = vec3(0.0f, 0.0, 5.0f);
+vec3 eyeSource = uEyePosition;
 
 vec4 specularColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 float ka = 0.3f;
-float kd = 0.8f;
+float kd = 0.7f;
 float ks = 0.8f;
 
 float shadow_calculation(vec4 light_space_coord) {
@@ -44,7 +46,6 @@ void main() {
     vec3 vNormal = texture(normal, vTexCoord).xyz;
 
     if (vNormal == vec3(0.0)) {
-        // Should probably include uModelView here
         discard;
     }
     float ambientOcclusion = texture(occlusionMap, vTexCoord).r;
@@ -59,7 +60,7 @@ void main() {
     float akd = kd * attentuation;
     float aks = ks * attentuation;
 
-    float shadow = shadow_calculation(uLightSpaceMatrix * vec4(vPos, 1.0f));
+    float shadow = shadow_calculation(uLightSpaceMatrix * inverse(uModelView) * vec4(vPos, 1.0f));
 
     color =
     ka * ambientOcclusion * diffuseColor +

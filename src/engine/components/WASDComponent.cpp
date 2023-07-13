@@ -17,7 +17,7 @@ const char *WASDComponent::getComponentName() {
 }
 
 void WASDComponent::physics_update(float deltaTime) {
-    auto position = entity.transform.getPosition();
+    auto position = context.camera->getPosition();
     if (glfwGetKey(context.window, GLFW_KEY_W)) {
         position += sensitivity * deltaTime * entity.transform.getForward();
     }
@@ -30,18 +30,24 @@ void WASDComponent::physics_update(float deltaTime) {
     if (glfwGetKey(context.window, GLFW_KEY_A)) {
         position -= sensitivity * deltaTime * entity.transform.getRight();
     }
-    entity.transform.setPosition(position);
+    if (glfwGetKey(context.window, GLFW_KEY_SPACE)) {
+        position += sensitivity * deltaTime * entity.transform.getUp();
+    }
+    if (glfwGetKey(context.window, GLFW_KEY_LEFT_SHIFT)) {
+        position -= sensitivity * deltaTime * entity.transform.getUp();
+    }
+    context.camera->setCameraPosition(position);
 
-    auto rotation = entity.transform.getEulerAngles();
+    auto rotation = context.camera->getTransform().getEulerAngles();
 
     if (glfwGetKey(context.window, GLFW_KEY_Q)) {
-        rotation.y += sensitivity * deltaTime * 30.0f;
+        rotation.y += -sensitivity * deltaTime * 30.0f;
     }
     if (glfwGetKey(context.window, GLFW_KEY_E)) {
-        rotation.y -= sensitivity * deltaTime * 30.0f;
+        rotation.y -= -sensitivity * deltaTime * 30.0f;
     }
 
-    entity.transform.setEulerAngles(rotation);
+    context.camera->setCameraRotation(rotation);
 }
 
 WASDComponent::WASDComponent(Entity &entity, Component::Context &context) : Component(entity, context) {}
