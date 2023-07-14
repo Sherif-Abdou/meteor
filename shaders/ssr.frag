@@ -35,8 +35,6 @@ void main() {
         vec4 screenPosition = uPerspective * currentPosition;
         screenPosition /= screenPosition.w;
         screenPosition.xy = screenPosition.xy * 0.5 + 0.5;
-//        screenPosition.x = clamp(screenPosition.x, 0.0, 1.0);
-//        screenPosition.y = clamp(screenPosition.y, 0.0, 1.0);
         if (screenPosition.x < 0.0 || screenPosition.x > 1.0) {
             discard;
         }

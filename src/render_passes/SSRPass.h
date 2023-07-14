@@ -11,7 +11,9 @@
 class SSRPass: public RenderPass {
 private:
     ShaderProgram* shaderProgram;
+    ShaderProgram* blurProgram;
     unsigned int fbo;
+    unsigned int blurFbo;
 public:
     void render() override;
 

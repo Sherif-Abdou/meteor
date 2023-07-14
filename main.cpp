@@ -74,6 +74,10 @@ int main() {
     auto* geoPass = new GeometryPass();
     auto* ssaoPass = new SSAOPass();
     auto* ssrPass = new SSRPass();
+    ssrPass->width /= 2.0f;
+    ssrPass->height /= 2.0f;
+    ssaoPass->width /= 2.0f;
+    ssaoPass->height /= 2.0f;
     auto* deferredPass = new DeferredPass();
     auto* skyboxPass = new SkyboxPass();
     std::string str = "textures/new_sky.jpg";

@@ -15,13 +15,14 @@ uniform sampler2D reflectionMap;
 uniform mat4 uModelView;
 
 out vec4 color;
-vec3 lightSource = vec3(0.0f, 2.0f, -0.0f);
+const vec3 lightSource = vec3(0.0f, 2.0f, -0.0f);
 vec3 eyeSource = uEyePosition;
 
-vec4 specularColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-float ka = 0.3f;
-float kd = 0.7f;
-float ks = 0.3f;
+const vec4 specularColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+const float ka = 0.3f;
+const float kd = 0.7f;
+const float ks = 0.3f;
+const float max_reflection = 0.2f;
 
 float shadow_calculation(vec4 light_space_coord) {
     vec3 projCoord = light_space_coord.xyz / light_space_coord.w;
@@ -50,6 +51,7 @@ void main() {
     }
     float ambientOcclusion = texture(occlusionMap, vTexCoord).r;
     vec4 ssrReflection = texture(reflectionMap, vTexCoord).rgba;
+    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(ssrReflection), min(ssrReflection.a, max_reflection));
 
     vec3 delta = normalize(lightSource-vPos);
     float length = length(lightSource-vPos);
@@ -68,10 +70,6 @@ void main() {
     kd * (1.0 - shadow) * lambertian * diffuseColor +
     ks * (1.0 - shadow) * pow(specular, 256.0f) * specularColor;
 
-    if (ssrReflection.a > 0) {
-        color = mix(color, vec4(ssrReflection), 0.1);
-    }
-//    color = ssrReflection;
 
     color.rgb = color.rgb / (color.rgb + vec3(1.0f));
 }
