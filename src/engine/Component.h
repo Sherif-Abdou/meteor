@@ -18,6 +18,9 @@ public:
         GLFWwindow* window;
         Camera* camera;
     };
+    struct CollisionContext {
+        Entity* collider;
+    };
 protected:
     Entity& entity;
     Context& context;
@@ -28,8 +31,11 @@ public:
     virtual void update(float deltaTime) = 0;
     virtual void physics_init() {}
     virtual void physics_update(float deltaTime) {}
-    virtual const char* getComponentName() = 0;
 
+    // Collision callback
+    virtual void on_collision(CollisionContext) {};
+
+    virtual const char* getComponentName() = 0;
     virtual ~Component() = default;
 };
 

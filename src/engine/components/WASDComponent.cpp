@@ -51,9 +51,6 @@ void WASDComponent::physics_update(float deltaTime) {
 
     context.camera->setCameraRotation(rotation);
 
-    if (entity.getComponent<HitboxComponent>().isColliding) {
-        multipler = -1.0f;
-    }
 
     auto current_position = entity.transform.getPosition();
     current_position.y -= 0.8f * multipler * deltaTime;
@@ -61,4 +58,8 @@ void WASDComponent::physics_update(float deltaTime) {
 }
 
 WASDComponent::WASDComponent(Entity &entity, Component::Context &context) : Component(entity, context) {}
+
+void WASDComponent::on_collision(Component::CollisionContext context) {
+    multipler = -1.0f;
+}
 

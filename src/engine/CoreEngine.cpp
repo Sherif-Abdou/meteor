@@ -73,7 +73,7 @@ void CoreEngine::physics_loop() {
     while (this->physics_enabled) {
         auto collisions = collisionManager.checkForCollisions();
         if (!collisions.empty()) {
-            handleCollisions(std::move(collisions));
+            handleCollisions(collisions);
         }
         current_time = glfwGetTime();
         if (current_time - previous_time > 1/physicsUpdateFrequency) {
@@ -124,12 +124,9 @@ Camera *CoreEngine::getCamera() const {
     return camera;
 }
 
-void CoreEngine::handleCollisions(CollisionManager::MatchList collisions) {
-    for (auto& [_, entity]: collider_map) {
-        entity->getComponent<HitboxComponent>().isColliding = false;
-    }
+void CoreEngine::handleCollisions(const CollisionManager::MatchList& collisions) {
     for (auto& [first_id, second_id]: collisions) {
-        collider_map[first_id]->getComponent<HitboxComponent>().isColliding = true;
-        collider_map[second_id]->getComponent<HitboxComponent>().isColliding = true;
+        collider_map[first_id]->on_collision({collider_map[second_id]});
+        collider_map[second_id]->on_collision({collider_map[first_id]});
     }
 }

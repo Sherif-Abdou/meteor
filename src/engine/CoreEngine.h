@@ -22,7 +22,7 @@ private:
     CollisionManager collisionManager {};
     std::unordered_map<unsigned int, Entity*> collider_map {};
 
-    void handleCollisions(CollisionManager::MatchList collisions);
+    void handleCollisions(const CollisionManager::MatchList& collisions);
 public:
     explicit CoreEngine();
 

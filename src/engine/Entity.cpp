@@ -44,6 +44,12 @@ Entity::Entity() {
 
 }
 
+void Entity::on_collision(Component::CollisionContext context) {
+    for (auto& component : components) {
+        component->on_collision(context);
+    }
+}
+
 //template<typename T>
 //T &Entity::getComponent() {
 ////    for (auto& component : components) {

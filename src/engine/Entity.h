@@ -34,6 +34,8 @@ public:
     void physics_init();
     void physics_update(float deltaTime);
 
+    void on_collision(Component::CollisionContext);
+
     void addComponent(std::unique_ptr<Component>);
 
     template<typename T>

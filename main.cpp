@@ -47,7 +47,7 @@ GLFWwindow * initialize_window() {
     glEnable(GL_FRAMEBUFFER_SRGB);
     glEnable(GL_CULL_FACE);
     glfwWindowHint(GL_SAMPLES, 4);
-//    glfwSwapInterval(1);
+    glfwSwapInterval(1);
     glEnable(GL_MULTISAMPLE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     return window;
@@ -76,8 +76,8 @@ int main() {
     auto* ssrPass = new SSRPass();
     ssrPass->width /= 2.0f;
     ssrPass->height /= 2.0f;
-    ssaoPass->width /= 2.0f;
-    ssaoPass->height /= 2.0f;
+//    ssaoPass->width /= 2.0f;
+//    ssaoPass->height /= 2.0f;
     auto* deferredPass = new DeferredPass();
     auto* skyboxPass = new SkyboxPass();
     std::string str = "textures/new_sky.jpg";

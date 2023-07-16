@@ -21,6 +21,8 @@ public:
 
     const char *getComponentName() override;
 
+    void on_collision(CollisionContext context) override;
+
     void physics_update(float deltaTime) override;
 };
 
