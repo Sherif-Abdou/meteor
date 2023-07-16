@@ -11,12 +11,18 @@
 #include <thread>
 #include "Entity.h"
 #include "../RenderPipeline.h"
+#include "physics/CollisionManager.h"
+#include <unordered_map>
 
 class CoreEngine {
 private:
     void physics_loop();
     bool physics_enabled = true;
     Component::Context context {};
+    CollisionManager collisionManager {};
+    std::unordered_map<unsigned int, Entity*> collider_map {};
+
+    void handleCollisions(CollisionManager::MatchList collisions);
 public:
     explicit CoreEngine();
 

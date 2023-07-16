@@ -6,8 +6,8 @@ uniform sampler2D ssao;
 
 out vec4 color;
 
-const int width = 5;
-const int height = 5;
+const int width = 4;
+const int height = 4;
 
 void main() {
     vec2 texelSize = 1.0 / vec2(textureSize(ssao, 0));

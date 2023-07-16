@@ -45,7 +45,8 @@ public:
             }
         }
         throw std::runtime_error("Component doesn't exist");
-    };
+    }
+
 };
 
 

@@ -3,6 +3,7 @@
 //
 
 #include "WASDComponent.h"
+#include "HitboxComponent.h"
 
 void WASDComponent::init() {
 
@@ -49,6 +50,14 @@ void WASDComponent::physics_update(float deltaTime) {
     }
 
     context.camera->setCameraRotation(rotation);
+
+    if (entity.getComponent<HitboxComponent>().isColliding) {
+        multipler = -1.0f;
+    }
+
+    auto current_position = entity.transform.getPosition();
+    current_position.y -= 0.8f * multipler * deltaTime;
+    entity.transform.setPosition(current_position);
 }
 
 WASDComponent::WASDComponent(Entity &entity, Component::Context &context) : Component(entity, context) {}

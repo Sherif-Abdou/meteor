@@ -9,6 +9,8 @@
 #include "../Component.h"
 
 class WASDComponent: public Component {
+private:
+    float multipler = 1.0f;
 public:
     float sensitivity = -0.7f;
     WASDComponent(Entity &entity, Context &context);
