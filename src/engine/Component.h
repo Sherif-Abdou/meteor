@@ -18,8 +18,13 @@ public:
         GLFWwindow* window;
         Camera* camera;
     };
+    enum class CollisionState {
+        STARTED,
+        ONGOING,
+    };
     struct CollisionContext {
         Entity* collider;
+        CollisionState state;
     };
 protected:
     Entity& entity;

@@ -10,7 +10,9 @@
 
 class WASDComponent: public Component {
 private:
-    float multipler = 1.0f;
+    float velocity = 1.0f;
+    float gravity = 0.9f;
+    double lastCollisionTime;
 public:
     float sensitivity = -0.7f;
     WASDComponent(Entity &entity, Context &context);
@@ -24,6 +26,8 @@ public:
     void on_collision(CollisionContext context) override;
 
     void physics_update(float deltaTime) override;
+
+    void updateCamera(float deltaTime);
 };
 
 

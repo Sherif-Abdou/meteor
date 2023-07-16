@@ -19,7 +19,7 @@ public:
     explicit Camera(RenderPipeline &pipeline);
 
     float getFov() const;
-    const Transform &getTransform() const;
+    Transform &getTransform() ;
     glm::vec3 getPosition() const;
     glm::vec3 getRotation() const;
     void setCameraPosition(glm::vec3 position);

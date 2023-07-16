@@ -21,10 +21,12 @@ void CoreEngine::frame_loop() {
     auto last_second = glfwGetTime();
     while (!glfwWindowShouldClose(window)) {
         current_time = glfwGetTime();
+        m.lock();
         for (auto& entity: entities) {
             entity->update(current_time - previous_time);
         }
         pipeline.render();
+        m.unlock();
 
         previous_time = current_time;
         glfwSwapBuffers(window);
@@ -71,18 +73,21 @@ void CoreEngine::physics_loop() {
     unsigned int ticks = 0;
 
     while (this->physics_enabled) {
-        auto collisions = collisionManager.checkForCollisions();
-        if (!collisions.empty()) {
-            handleCollisions(collisions);
-        }
         current_time = glfwGetTime();
         if (current_time - previous_time > 1/physicsUpdateFrequency) {
+            m.lock();
+            auto collisions = collisionManager.checkForCollisions();
+            if (!collisions.empty()) {
+                handleCollisions(collisions);
+            }
+            previousCollisions = std::move(collisions);
             for (auto& entity: entities) {
                 entity->physics_update(current_time - previous_time);
             }
             ticks++;
 
             previous_time = current_time;
+            m.unlock();
         }
         if (current_time - previous_second_time > 1.0) {
             std::cout << "TPS: " << ticks << "\n";
@@ -126,7 +131,13 @@ Camera *CoreEngine::getCamera() const {
 
 void CoreEngine::handleCollisions(const CollisionManager::MatchList& collisions) {
     for (auto& [first_id, second_id]: collisions) {
-        collider_map[first_id]->on_collision({collider_map[second_id]});
-        collider_map[second_id]->on_collision({collider_map[first_id]});
+        Component::CollisionState collisionState;
+        if (std::find(previousCollisions.begin(), previousCollisions.end(), std::pair {first_id, second_id}) == previousCollisions.end()) {
+            collisionState = Component::CollisionState::STARTED;
+        } else {
+            collisionState = Component::CollisionState::ONGOING;
+        }
+        collider_map[first_id]->on_collision({collider_map[second_id], collisionState});
+        collider_map[second_id]->on_collision({collider_map[first_id], collisionState});
     }
 }

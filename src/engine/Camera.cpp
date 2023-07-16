@@ -4,7 +4,7 @@
 
 #include "Camera.h"
 
-const Transform &Camera::getTransform() const {
+Transform &Camera::getTransform() {
     return transform;
 }
 

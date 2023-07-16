@@ -3,7 +3,6 @@
 //
 
 #include "WASDComponent.h"
-#include "HitboxComponent.h"
 
 void WASDComponent::init() {
 
@@ -18,6 +17,16 @@ const char *WASDComponent::getComponentName() {
 }
 
 void WASDComponent::physics_update(float deltaTime) {
+    updateCamera(deltaTime);
+
+
+    auto current_position = entity.transform.getPosition();
+    current_position.y += velocity * deltaTime;
+    velocity -= gravity * deltaTime;
+    entity.transform.setPosition(current_position);
+}
+
+void WASDComponent::updateCamera(float deltaTime) {
     auto position = context.camera->getPosition();
     auto& camera_transform = context.camera->getTransform();
     if (glfwGetKey(context.window, GLFW_KEY_W)) {
@@ -50,16 +59,13 @@ void WASDComponent::physics_update(float deltaTime) {
     }
 
     context.camera->setCameraRotation(rotation);
-
-
-    auto current_position = entity.transform.getPosition();
-    current_position.y -= 0.8f * multipler * deltaTime;
-    entity.transform.setPosition(current_position);
 }
 
 WASDComponent::WASDComponent(Entity &entity, Component::Context &context) : Component(entity, context) {}
 
 void WASDComponent::on_collision(Component::CollisionContext context) {
-    multipler = -1.0f;
+    if (context.state == Component::CollisionState::STARTED) {
+        velocity *= -std::sqrt(0.5f);
+    }
 }
 

@@ -16,11 +16,13 @@
 
 class CoreEngine {
 private:
+    std::mutex m;
     void physics_loop();
     bool physics_enabled = true;
     Component::Context context {};
     CollisionManager collisionManager {};
     std::unordered_map<unsigned int, Entity*> collider_map {};
+    CollisionManager::MatchList previousCollisions;
 
     void handleCollisions(const CollisionManager::MatchList& collisions);
 public:
