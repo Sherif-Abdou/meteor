@@ -13,7 +13,7 @@ void HitboxComponent::update(float deltaTime) {
 }
 
 const char *HitboxComponent::getComponentName() {
-    return "hitbox_component";
+    return component_name;
 }
 
 void HitboxComponent::updateHitbox() {
@@ -45,5 +45,5 @@ unsigned int HitboxComponent::getHitboxId() {
 }
 
 const char *HitboxComponent::getClassComponentName() {
-    return "hitbox_component";
+    return component_name;
 }

@@ -56,7 +56,7 @@ MeshComponent::MeshComponent(Entity & entity, Context & context, RenderPipeline 
 MeshComponent::~MeshComponent() = default;
 
 const char *MeshComponent::getComponentName() {
-    return "mesh_component";
+    return component_name;
 }
 
 const char *MeshComponent::getClassComponentName() {

@@ -2,6 +2,7 @@
 // Created by sheri on 7/14/2023.
 //
 
+#include <iterator>
 #include "CollisionManager.h"
 
 CollisionManager::MatchList CollisionManager::checkForCollisions() {

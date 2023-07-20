@@ -13,6 +13,7 @@ class HitboxComponent: public Component {
 private:
     AABB hitbox;
     void updateHitbox();
+    constexpr static const char* component_name = "hitbox_component";
 public:
     float height = 1.0;
     float width = 1.0;
