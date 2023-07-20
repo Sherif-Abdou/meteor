@@ -18,12 +18,12 @@ const char *HitboxComponent::getComponentName() {
 
 void HitboxComponent::updateHitbox() {
     auto translation = entity.transform.getPosition();
-    hitbox.startX = translation.x - width/2.0f;
-    hitbox.endX = translation.x + width/2.0f;
-    hitbox.startY = translation.y - height/2.0f;
-    hitbox.endY = translation.y + height/2.0f;
-    hitbox.startZ = translation.z - depth/2.0f;
-    hitbox.endZ = translation.z + depth/2.0f;
+    hitbox.startX = translation.x + offset.x - width/2.0f;
+    hitbox.endX = translation.x + offset.x + width/2.0f;
+    hitbox.startY = translation.y + offset.y - height/2.0f;
+    hitbox.endY = translation.y + offset.y + height/2.0f;
+    hitbox.startZ = translation.z + offset.z - depth/2.0f;
+    hitbox.endZ = translation.z + offset.z + depth/2.0f;
 }
 
 void HitboxComponent::physics_init() {

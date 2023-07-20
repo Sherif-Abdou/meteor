@@ -19,7 +19,8 @@ void main() {
     vec2 texSize = textureSize(position, 0).xy;
     vec3 fragPos = texture(position, vTexCoord).xyz;
     vec3 fragNormal = normalize(texture(normal, vTexCoord).xyz);
-    if (fragNormal == vec3(0.0)) {
+    float fragShinyness = texture(albedo, vTexCoord).a;
+    if (fragNormal == vec3(0.0) || fragShinyness < 0.9) {
         discard;
     }
 

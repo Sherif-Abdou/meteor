@@ -16,6 +16,7 @@ private:
     std::unique_ptr<GraphicsObject> graphics_object;
     std::optional<std::string> albedoPath;
     std::optional<std::string> normalPath;
+    glm::vec4 solid_albedo;
     std::string obj_path;
     RenderPipeline& pipeline;
 public:
@@ -42,6 +43,9 @@ public:
 
     const char *getComponentName() override;
     static const char *getClassComponentName();
+
+    glm::vec4 getSolidColor();
+    void setSolidColor(const glm::vec4&);
 };
 
 
