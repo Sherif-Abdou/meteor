@@ -30,6 +30,7 @@ public:
 
 private:
     std::map<string, glm::vec3> localVec3Uniforms {};
+    std::map<string, glm::vec4> localVec4Uniforms {};
     std::map<string, int> localIntegerUniforms {};
     unsigned int shader_program_id;
 public:
@@ -46,6 +47,7 @@ public:
     void clearLocalUniforms();
     void addMatrix4Uniform(const string& name, glm::mat4 matrix);
     void addVec3Uniform(const string& name, glm::vec3 vector);
+    void addVec4Uniform(const string& name, glm::vec4 vector);
     void addIntegerUniform(const string& name, int number);
     void addUniforms();
     void applyProgram();

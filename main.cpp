@@ -22,7 +22,7 @@ using std::string;
 constexpr float WIDTH = 1920.0f;
 constexpr float HEIGHT = 1080.0f;
 
-const string MODEL = "models/monkey.obj";
+const string MODEL = "models/train.obj";
 
 const string MODEL2 = "models/background.obj";
 const glm::vec3 eyePosition = glm::vec3(0.0, 0.0, 5.0f);
@@ -76,8 +76,8 @@ int main() {
     auto* ssrPass = new SSRPass();
     ssrPass->width /= 2.0f;
     ssrPass->height /= 2.0f;
-//    ssaoPass->width /= 2.0f;
-//    ssaoPass->height /= 2.0f;
+    ssaoPass->width /= 2.0f;
+    ssaoPass->height /= 2.0f;
     auto* deferredPass = new DeferredPass();
     auto* skyboxPass = new SkyboxPass();
     std::string str = "textures/new_sky.jpg";
@@ -100,11 +100,12 @@ int main() {
     auto& main_object = engine.createEntityFromOBJPath("main", MODEL);
     auto& second_object = engine.createEntityFromOBJPath("second", MODEL2);
     main_object.addComponent(std::make_unique<WASDComponent>(main_object, engine.getContext()));
-    main_object.getComponent<MeshComponent>().setAlbedoPath("textures/1001_albedo.jpg");
+    main_object.getComponent<MeshComponent>().setAlbedoPath("textures/locomotive_diffuse.png");
 //    main_object.getComponent<MeshComponent>().setNormalPath("textures/1001_normal.png");
-    main_object.getComponent<HitboxComponent>().height *= 2.0f;
+    main_object.getComponent<HitboxComponent>().height *= 1.0f;
+    main_object.getComponent<HitboxComponent>().offset.y += 0.5f;
     main_object.transform.setPosition(glm::vec3(0.0, 1.0, -0.0));
-    second_object.getComponent<MeshComponent>().setAlbedoPath("textures/red.jpg");
+    second_object.getComponent<MeshComponent>().setSolidColor({0.3, 0.4, 0.5, 1.0});
     second_object.transform.setPosition(second_object.transform.getPosition() + glm::vec3(0.0, -3.0, 0.0));
     second_object.transform.setScale(glm::vec3(5.0f));
 
@@ -119,5 +120,7 @@ int main() {
     delete geoPass;
     delete ssaoPass;
     delete deferredPass;
+    delete ssrPass;
+    delete skyboxPass;
     return 0;
 }

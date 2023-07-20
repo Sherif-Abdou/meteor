@@ -13,12 +13,14 @@ layout(location = 3) out vec3 gTangent;
 uniform sampler2D albedo;
 uniform sampler2D normalMap;
 uniform int normalMapUsed;
+uniform vec4 solidAlbedo;
+uniform bool useSolidAlbedo;
 
 void main() {
     gPos = vPos;
     gNormal = normalize(vNormal);
     gTangent = normalize(vTangent);
-    gAlbedo = vec4(texture(albedo, vTexCoord).rgb, 1.0f);
+    gAlbedo = useSolidAlbedo ? solidAlbedo : vec4(texture(albedo, vTexCoord).rgb, 0.0f);
     if (normalMapUsed == 1) {
         vec3 map_normal = texture(normalMap, vTexCoord).rgb;
         vec3 B = cross(gNormal, gTangent);

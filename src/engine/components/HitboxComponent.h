@@ -17,6 +17,7 @@ public:
     float height = 1.0;
     float width = 1.0;
     float depth = 1.0;
+    glm::vec3 offset = glm::vec3(0.0f);
     bool isColliding = false;
 
     HitboxComponent(Entity &entity, Context &context);

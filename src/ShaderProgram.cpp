@@ -95,6 +95,11 @@ void ShaderProgram::addLocalUniforms() {
         glUniform3fv(location, 1, glm::value_ptr(vector));
     }
 
+    for (const auto& [name, vector] : localVec4Uniforms) {
+        location = glGetUniformLocation(shader_program_id, name.c_str());
+        glUniform4fv(location, 1, glm::value_ptr(vector));
+    }
+
     for (const auto& [name, integer] : localIntegerUniforms) {
         location = glGetUniformLocation(shader_program_id, name.c_str());
         glUniform1i(location, integer);
@@ -132,4 +137,8 @@ void ShaderProgram::addIntegerUniform(const ShaderProgram::string &name, int num
 
 unsigned int ShaderProgram::getShaderProgramId() const {
     return shader_program_id;
+}
+
+void ShaderProgram::addVec4Uniform(const ShaderProgram::string &name, glm::vec4 vector) {
+    localVec4Uniforms[name] = vector;
 }

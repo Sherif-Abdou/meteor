@@ -15,6 +15,7 @@ void MeshComponent::init() {
     if (normalPath.has_value()) {
         graphics_object->setNormalTexture(*normalPath);
     }
+    graphics_object->setSolidAlbedo(solid_albedo);
 
     pipeline.graphics_object[entity.getName()] = graphics_object.get();
 }
@@ -61,4 +62,12 @@ const char *MeshComponent::getComponentName() {
 
 const char *MeshComponent::getClassComponentName() {
     return component_name;
+}
+
+glm::vec4 MeshComponent::getSolidColor() {
+    return solid_albedo;
+}
+
+void MeshComponent::setSolidColor(const glm::vec4 & albedo) {
+    MeshComponent::solid_albedo = albedo;
 }

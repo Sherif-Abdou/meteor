@@ -25,12 +25,19 @@ private:
     void generateVAO();
     std::optional<std::string> albedoTexturePath {};
     std::optional<std::string> normalTexturePath {};
+    glm::vec4 solidAlbedo = glm::vec4(0.0, 0.0, 0.0, 1.0);
+public:
+    const glm::vec4 &getSolidAlbedo() const;
+
+    void setSolidAlbedo(const glm::vec4 &solidAlbedo);
+
 public:
     void setAlbedoTexture(std::string path);
     void setNormalTexture(std::string path);
     GraphicsObject(const GraphicsObject&) = delete;
     GraphicsObject(GraphicsObject&&) = default;
     GraphicsObject& operator=(GraphicsObject&&) = default;
+    bool isTransparent = false;
     glm::vec3 translation {};
     glm::vec3 rotation {};
     glm::vec3 scale = glm::vec3(1.0f);

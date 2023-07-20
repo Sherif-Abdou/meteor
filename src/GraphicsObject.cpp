@@ -58,8 +58,11 @@ void GraphicsObject::addObjectUniformsTo(ShaderProgram& shader_program, bool app
         if (albedoTexturePath.has_value()) {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, albedoTexture);
+            shader_program.addIntegerUniform("useSolidAlbedo", 0);
             shader_program.addIntegerUniform("albedo", 0);
         } else {
+            shader_program.addIntegerUniform("useSolidAlbedo", 1);
+            shader_program.addVec4Uniform("solidAlbedo", solidAlbedo);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, GL_NONE);
         }
@@ -124,4 +127,12 @@ GraphicsObject::GraphicsObject(OBJFile & obj) {
     vertices = obj.size();
     buffer = obj.createBuffer();
     generateVAO();
+}
+
+const glm::vec4 &GraphicsObject::getSolidAlbedo() const {
+    return solidAlbedo;
+}
+
+void GraphicsObject::setSolidAlbedo(const glm::vec4 &solidAlbedo) {
+    GraphicsObject::solidAlbedo = solidAlbedo;
 }
