@@ -12,6 +12,8 @@ uniform sampler2D shadowMap;
 uniform sampler2D occlusionMap;
 uniform sampler2D reflectionMap;
 
+uniform mat4 uPerspective;
+
 uniform mat4 uModelView;
 
 out vec4 color;
@@ -70,6 +72,9 @@ void main() {
     kd * (1.0 - shadow) * lambertian * diffuseColor +
     ks * (1.0 - shadow) * pow(specular, 256.0f) * specularColor;
 
+    vec4 ssPosition = (uPerspective * vec4(vPos, 1.0));
+    ssPosition /= ssPosition.w;
+    gl_FragDepth = ssPosition.z;
 
     color.rgb = color.rgb / (color.rgb + vec3(1.0f));
 }

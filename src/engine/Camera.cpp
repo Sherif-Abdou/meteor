@@ -23,11 +23,15 @@ void Camera::setCameraRotation(glm::vec3 rotation) {
 }
 
 void Camera::updatePipelineMatrices() {
-    pipeline.setCameraTranslation(getTransform().getPosition());
-    pipeline.setCameraRotation(-getTransform().getEulerAngles());
+    for (auto pipeline : pipelines) {
+        pipeline->setCameraTranslation(getTransform().getPosition());
+        pipeline->setCameraRotation(-getTransform().getEulerAngles());
+    }
 }
 
-Camera::Camera(RenderPipeline &pipeline) : pipeline(pipeline) {}
+Camera::Camera(std::vector<RenderPipeline*> pipelines) : pipelines(std::move(pipelines)) {
+
+}
 
 glm::vec3 Camera::getPosition() const {
     return transform.getPosition();

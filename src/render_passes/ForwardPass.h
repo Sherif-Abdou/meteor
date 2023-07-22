@@ -7,10 +7,13 @@
 
 
 #include "RenderPass.h"
+#include "../RenderPipeline.h"
 
 class ForwardPass: public RenderPass {
 public:
     ForwardPass() = default;
+    bool transparencyMode = false;
+    RenderPipeline* pipeline;
 
     void init() override;
     void render() override;

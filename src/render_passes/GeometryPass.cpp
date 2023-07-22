@@ -17,31 +17,27 @@ void GeometryPass::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     shaderProgram->applyProgram();
 
-    std::vector<GraphicsObject*> transparent;
 
     for (auto& [name, object] : object_inputs) {
         if (name == "deferred_quad" || name == "skybox_cube") {
             continue;
         }
-        if (object->isTransparent) {
-            transparent.push_back(object);
-            continue;
-        }
+
         object->addObjectUniformsTo(*shaderProgram, true);
         shaderProgram->addUniforms();
         object->raw_render();
     }
 
 //    std::sort(transparent.begin(), transparent.end(), [&](GraphicsObject* a, GraphicsObject* b) {
-//        auto viewMatrix = shaderProgram->getViewMatrix();
+//        auto viewMatrix = firstShaderProgram->getViewMatrix();
 //        glm::vec4 adj_a = viewMatrix * glm::vec4(a->translation, 1.0);
 //        glm::vec4 adj_b = viewMatrix * glm::vec4(a->translation, 1.0);
 //        return adj_a.z < adj_b.z;
 //    });
 //
 //    for (auto object: transparent) {
-//        object->addObjectUniformsTo(*shaderProgram, true);
-//        shaderProgram->addUniforms();
+//        object->addObjectUniformsTo(*firstShaderProgram, true);
+//        firstShaderProgram->addUniforms();
 //        object->raw_render();
 //    }
 //    glDisable(GL_BLEND);

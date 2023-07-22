@@ -9,6 +9,7 @@
 
 void CoreEngine::frame_init() {
     pipeline.init();
+    transparent_pipeline.init();
     for (auto& entity: entities) {
         entity->init();
     }
@@ -22,10 +23,13 @@ void CoreEngine::frame_loop() {
     while (!glfwWindowShouldClose(window)) {
         current_time = glfwGetTime();
         m.lock();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         for (auto& entity: entities) {
             entity->update(current_time - previous_time);
         }
         pipeline.render();
+        transparent_pipeline.render();
         m.unlock();
 
         previous_time = current_time;
@@ -57,6 +61,22 @@ Entity& CoreEngine::createEntityFromOBJPath(const std::string & name, const std:
     return *entities[entities.size() - 1];
 }
 
+Entity &CoreEngine::createTransparentEntityFromOBJPath(const std::string & name, const std::string & obj_path) {
+    auto entity = std::make_unique<Entity>();
+    entity->setName(name);
+    std::unique_ptr<MeshComponent> mesh = std::make_unique<MeshComponent>(*entity, context, transparent_pipeline);
+    mesh->setObjPath(obj_path);
+    std::unique_ptr<HitboxComponent> hitbox = std::make_unique<HitboxComponent>(*entity, context);
+    collisionManager.addCollider(hitbox->getHitbox());
+    auto id = hitbox->getHitboxId();
+
+    entity->addComponent(std::move(mesh));
+    entity->addComponent(std::move(hitbox));
+    entities.push_back(std::move(entity));
+
+    collider_map[id] = entities[entities.size() - 1].get();
+    return *entities[entities.size() - 1];
+}
 void CoreEngine::start_physics() {
     for (auto& entity: entities) {
         entity->physics_init();
@@ -116,7 +136,7 @@ Component::Context &CoreEngine::getContext() {
 }
 
 CoreEngine::CoreEngine() {
-    camera = new Camera(pipeline);
+    camera = new Camera({&pipeline});
     context.camera = camera;
 }
 
@@ -141,3 +161,17 @@ void CoreEngine::handleCollisions(const CollisionManager::MatchList& collisions)
         collider_map[second_id]->on_collision({collider_map[first_id], collisionState});
     }
 }
+
+CoreEngine::CoreEngine(RenderPipeline pipeline): pipeline(std::move(pipeline)) {
+    camera = new Camera({&this->pipeline, &this->transparent_pipeline});
+    context.camera = camera;
+}
+
+CoreEngine::CoreEngine(RenderPipeline pipeline, RenderPipeline transparency)
+    : pipeline(std::move(pipeline)), transparent_pipeline(std::move(transparency)) {
+    camera = new Camera({&this->pipeline, &this->transparent_pipeline});
+    context.camera = camera;
+}
+
+
+

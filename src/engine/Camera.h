@@ -12,11 +12,11 @@
 class Camera {
 private:
     Transform transform;
-    RenderPipeline& pipeline;
+    std::vector<RenderPipeline*> pipelines;
     float fov = 90.0f;
     void updatePipelineMatrices();
 public:
-    explicit Camera(RenderPipeline &pipeline);
+    explicit Camera(std::vector<RenderPipeline*> pipelines);
 
     float getFov() const;
     Transform &getTransform() ;

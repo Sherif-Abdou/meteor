@@ -6,7 +6,7 @@
 
 void RenderPipeline::render() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     for (auto pass : passes) {
         addTexturesToRenderPass(*pass);

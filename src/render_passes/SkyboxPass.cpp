@@ -14,6 +14,7 @@ void SkyboxPass::render() {
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+    glDepthMask(GL_FALSE);
     auto object = object_inputs["skybox_cube"];
 
 
@@ -24,6 +25,8 @@ void SkyboxPass::render() {
     object->addObjectUniformsTo(*skybox_shader);
     skybox_shader->addUniforms();
     object->raw_render();
+
+    glDepthMask(GL_TRUE);
 }
 
 void SkyboxPass::init() {

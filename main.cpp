@@ -18,13 +18,16 @@ using std::string;
 #include "src/render_passes/SkyboxPass.h"
 #include "src/render_passes/SSRPass.h"
 #include "src/engine/components/HitboxComponent.h"
+#include "src/render_passes/ForwardPass.h"
+#include "src/render_passes/WeightedBlendPass.h"
 
 constexpr float WIDTH = 1920.0f;
 constexpr float HEIGHT = 1080.0f;
 
 const string MODEL = "models/train.obj";
-
 const string MODEL2 = "models/background.obj";
+const string MODEL3 = "models/monkey.obj";
+
 const glm::vec3 eyePosition = glm::vec3(0.0, 0.0, 5.0f);
 
 GLFWwindow * initialize_window() {
@@ -46,11 +49,45 @@ GLFWwindow * initialize_window() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_FRAMEBUFFER_SRGB);
     glEnable(GL_CULL_FACE);
-    glfwWindowHint(GL_SAMPLES, 4);
+//    glfwWindowHint(GL_SAMPLES, 4);
     glfwSwapInterval(1);
-    glEnable(GL_MULTISAMPLE);
+//    glEnable(GL_MULTISAMPLE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     return window;
+}
+
+RenderPipeline generateDeferredPipeline() {
+    RenderPipeline pipeline {};
+
+    auto* shadowPass = new ShadowPass(glm::vec3(0.0f, 4.0f, -0.0f));
+    auto* geoPass = new GeometryPass();
+    auto* ssaoPass = new SSAOPass();
+    auto* ssrPass = new SSRPass();
+    auto* deferredPass = new DeferredPass();
+    auto* skyboxPass = new SkyboxPass();
+    std::string str = "textures/new_sky.jpg";
+    std::string arr[6] = {str, str, str, str, str, str};
+    skyboxPass->setSkyboxPaths(arr);
+
+    pipeline.addPass(shadowPass);
+    pipeline.addPass(geoPass);
+    pipeline.addPass(ssaoPass);
+    pipeline.addPass(ssrPass);
+    pipeline.addPass(deferredPass);
+    pipeline.addPass(skyboxPass);
+
+    return pipeline;
+}
+
+RenderPipeline generateTransparentForwardPipeline() {
+    RenderPipeline pipeline {};
+    auto* forwardPass = new ForwardPass();
+    forwardPass->transparencyMode = true;
+    forwardPass->pipeline = &pipeline;
+
+    pipeline.addPass(forwardPass);
+
+    return pipeline;
 }
 
 int main() {
@@ -67,38 +104,22 @@ int main() {
 
     shader_program.addVec3Uniform("uEyePosition", eyePosition);
 
-    auto engine = CoreEngine();
+    auto pipeline = generateDeferredPipeline();
+    auto transparency_pipeline = generateTransparentForwardPipeline();
+    auto engine = CoreEngine(pipeline, transparency_pipeline);
     engine.setWindow(window);
 
-    auto* shadowPass = new ShadowPass(glm::vec3(0.0f, 4.0f, -0.0f));
-    auto* geoPass = new GeometryPass();
-    auto* ssaoPass = new SSAOPass();
-    auto* ssrPass = new SSRPass();
-    ssrPass->width /= 2.0f;
-    ssrPass->height /= 2.0f;
-    ssaoPass->width /= 2.0f;
-    ssaoPass->height /= 2.0f;
-    auto* deferredPass = new DeferredPass();
-    auto* skyboxPass = new SkyboxPass();
-    std::string str = "textures/new_sky.jpg";
-    std::string arr[6] = {str, str, str, str, str, str};
-    skyboxPass->setSkyboxPaths(arr);
     engine.pipeline.uniforms.projectionMatrix = glm::perspectiveFov(glm::radians(90.f), 1920.0f, 1080.0f, 0.1f, 100.0f);
+    engine.transparent_pipeline.uniforms.projectionMatrix = glm::perspectiveFov(glm::radians(90.f), 1920.0f, 1080.0f, 0.1f, 100.0f);
     engine.getCamera()->setCameraPosition({0.0f, 0.0f, -7.0f});
-
     engine.pipeline.graphics_object["deferred_quad"] = &deferred_quad_body;
     engine.pipeline.graphics_object["skybox_cube"] = &skybox_cube_body;
 
 
-    engine.pipeline.addPass(shadowPass);
-    engine.pipeline.addPass(geoPass);
-    engine.pipeline.addPass(ssrPass);
-    engine.pipeline.addPass(ssaoPass);
-    engine.pipeline.addPass(deferredPass);
-    engine.pipeline.addPass(skyboxPass);
-
     auto& main_object = engine.createEntityFromOBJPath("main", MODEL);
     auto& second_object = engine.createEntityFromOBJPath("second", MODEL2);
+    auto& transparent_object = engine.createTransparentEntityFromOBJPath("transparent", MODEL3);
+    transparent_object.transform.setPosition({1, 1, 2});
     main_object.addComponent(std::make_unique<WASDComponent>(main_object, engine.getContext()));
     main_object.getComponent<MeshComponent>().setAlbedoPath("textures/locomotive_diffuse.png");
 //    main_object.getComponent<MeshComponent>().setNormalPath("textures/1001_normal.png");
@@ -116,11 +137,11 @@ int main() {
 
     engine.end_physics();
     glfwTerminate();
-    delete shadowPass;
-    delete geoPass;
-    delete ssaoPass;
-    delete deferredPass;
-    delete ssrPass;
-    delete skyboxPass;
+//    delete shadowPass;
+//    delete geoPass;
+//    delete ssaoPass;
+//    delete deferredPass;
+//    delete ssrPass;
+//    delete skyboxPass;
     return 0;
 }

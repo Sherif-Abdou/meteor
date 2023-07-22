@@ -25,6 +25,6 @@ void main() {
         vec3 map_normal = texture(normalMap, vTexCoord).rgb;
         vec3 B = cross(gNormal, gTangent);
         mat3 TBN = mat3(gTangent, B, gNormal);
-        gNormal = TBN * map_normal;
+        gNormal = TBN * (2.0f * map_normal - 1.0f);
     }
 }

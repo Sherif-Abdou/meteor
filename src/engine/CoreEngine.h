@@ -5,6 +5,7 @@
 #ifndef METEOR_COREENGINE_H
 #define METEOR_COREENGINE_H
 
+#include <utility>
 #include <vector>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
@@ -27,6 +28,8 @@ private:
     void handleCollisions(const CollisionManager::MatchList& collisions);
 public:
     explicit CoreEngine();
+    explicit CoreEngine(RenderPipeline pipeline);
+    explicit CoreEngine(RenderPipeline pipeline, RenderPipeline transparency);
 
     [[nodiscard]] Component::Context &getContext();
 
@@ -44,6 +47,7 @@ public:
 public:
     std::vector<std::unique_ptr<Entity>> entities {};
     RenderPipeline pipeline {};
+    RenderPipeline transparent_pipeline {};
     float physicsUpdateFrequency = 240.0f;
     std::unique_ptr<std::thread> physics_thread;
     void frame_init();
@@ -51,6 +55,7 @@ public:
     void start_physics();
     void end_physics();
     Entity& createEntityFromOBJPath(const std::string&, const std::string&);
+    Entity& createTransparentEntityFromOBJPath(const std::string&, const std::string&);
 
     virtual ~CoreEngine();
 };
