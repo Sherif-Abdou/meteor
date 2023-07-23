@@ -1,5 +1,5 @@
 //
-// Created by sheri on 6/21/2023.
+// Created by sherif on 6/21/2023.
 //
 
 #ifndef METEOR_SHADERPROGRAM_H

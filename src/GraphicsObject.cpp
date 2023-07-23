@@ -1,5 +1,5 @@
 //
-// Created by sheri on 6/21/2023.
+// Created by sherif on 6/21/2023.
 //
 
 #include "GraphicsObject.h"

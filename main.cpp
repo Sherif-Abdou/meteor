@@ -30,11 +30,17 @@ const string MODEL3 = "models/monkey.obj";
 
 const glm::vec3 eyePosition = glm::vec3(0.0, 0.0, 5.0f);
 
+
+
 GLFWwindow * initialize_window() {
     if (!glfwInit())
         throw std::runtime_error("Can't Initialize Window");
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+#ifndef NDEBUG
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
+    std::cout << "Debug context enabled\n";
+#endif
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Meteor", nullptr, nullptr);
 
@@ -89,6 +95,8 @@ RenderPipeline generateTransparentForwardPipeline() {
 
     return pipeline;
 }
+
+
 
 int main() {
     auto window = initialize_window();

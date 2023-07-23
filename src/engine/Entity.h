@@ -1,5 +1,5 @@
 //
-// Created by sheri on 7/6/2023.
+// Created by sherif on 7/6/2023.
 //
 
 #ifndef METEOR_ENTITY_H
@@ -49,6 +49,15 @@ public:
         throw std::runtime_error("Component doesn't exist");
     }
 
+    template<typename T>
+    bool hasComponent() {
+        for (auto& component : components) {
+            if (component->getComponentName() == T::getClassComponentName()) {
+                return true;
+            }
+        }
+        return false;
+    }
 };
 
 

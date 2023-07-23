@@ -1,5 +1,5 @@
 //
-// Created by sheri on 7/20/2023.
+// Created by sherif on 7/20/2023.
 //
 
 #include "WeightedBlendPass.h"
