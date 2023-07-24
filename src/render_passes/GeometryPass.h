@@ -19,6 +19,8 @@ public:
 
     ShaderProgram &getShader() override;
 
+    unsigned int* getFBOPointer();
+
     ~GeometryPass() override;
 };
 

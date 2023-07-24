@@ -62,6 +62,7 @@ GLFWwindow * initialize_window() {
     return window;
 }
 
+static unsigned int* gFBO;
 RenderPipeline generateDeferredPipeline() {
     RenderPipeline pipeline {};
 
@@ -81,6 +82,7 @@ RenderPipeline generateDeferredPipeline() {
     pipeline.addPass(ssrPass);
     pipeline.addPass(deferredPass);
     pipeline.addPass(skyboxPass);
+    gFBO = geoPass->getFBOPointer();
 
     return pipeline;
 }
@@ -90,6 +92,7 @@ RenderPipeline generateTransparentForwardPipeline() {
     auto* forwardPass = new ForwardPass();
     forwardPass->transparencyMode = true;
     forwardPass->pipeline = &pipeline;
+    forwardPass->depth_buffer_ptr = gFBO;
 
     pipeline.addPass(forwardPass);
 

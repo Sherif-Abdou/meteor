@@ -5,9 +5,6 @@
 #include "ForwardPass.h"
 
 void ForwardPass::init() {
-    constexpr float WIDTH = 1920.0f;
-    constexpr float HEIGHT = 1080.0f;
-
     shader_program = new ShaderProgram("shaders/geometry.vert", "shaders/basic_transparency.frag");
 }
 
@@ -16,7 +13,12 @@ void ForwardPass::render() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     if (transparencyMode) {
-//        glDepthMask(GL_FALSE);
+        if (depth_buffer_ptr != nullptr) {
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, *depth_buffer_ptr);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+            glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
@@ -36,7 +38,6 @@ void ForwardPass::render() {
         object->raw_render();
     }
     if (transparencyMode) {
-//        glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
     }
     glDepthFunc(GL_LESS);

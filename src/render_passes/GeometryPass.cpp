@@ -108,3 +108,7 @@ ShaderProgram &GeometryPass::getShader() {
 GeometryPass::~GeometryPass() {
     delete shaderProgram;
 }
+
+unsigned int *GeometryPass::getFBOPointer() {
+    return &gFBO;
+}

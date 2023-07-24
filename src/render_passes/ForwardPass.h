@@ -14,6 +14,7 @@ public:
     ForwardPass() = default;
     bool transparencyMode = false;
     RenderPipeline* pipeline;
+    unsigned int* depth_buffer_ptr = nullptr;
 
     void init() override;
     void render() override;
