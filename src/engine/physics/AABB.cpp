@@ -37,3 +37,7 @@ AABBItem AABB::endZItem() {
 unsigned int AABB::getId() const {
     return id;
 }
+
+glm::vec3 AABB::center() {
+    return {(startX + endX) / 2.0f, (startY + endY) / 2.0f, (startZ + endZ) / 2.0f};
+}

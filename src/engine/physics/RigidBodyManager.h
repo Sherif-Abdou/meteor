@@ -12,10 +12,12 @@
 class RigidBodyManager {
 public:
     std::vector<RigidBodyComponent*> bodies;
-    void runRigidBodyCollisions();
+    void handleCollision(RigidBodyComponent &a, RigidBodyComponent &b, glm::vec3 intersection);
 private:
-    void handleCollision(RigidBodyComponent* a, RigidBodyComponent* b);
     std::pair<float, float> handleCollisionAxis(float m1, float v1, float m2, float v2);
+
+    std::pair<glm::vec3, glm::vec3> collisionMath(RigidBodyComponent &a, RigidBodyComponent &b, glm::vec3 intersection);
+
 };
 
 

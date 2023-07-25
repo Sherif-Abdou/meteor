@@ -20,10 +20,10 @@ void WASDComponent::physics_update(float deltaTime) {
     updateCamera(deltaTime);
 
 
-    auto current_position = entity.transform.getPosition();
-    current_position.y += velocity * deltaTime;
-    velocity -= gravity * deltaTime;
-    entity.transform.setPosition(current_position);
+//    auto current_position = entity.transform.getPosition();
+//    current_position.y += velocity * deltaTime;
+//    velocity -= gravity * deltaTime;
+//    entity.transform.setPosition(current_position);
 }
 
 void WASDComponent::updateCamera(float deltaTime) {
@@ -64,8 +64,8 @@ void WASDComponent::updateCamera(float deltaTime) {
 WASDComponent::WASDComponent(Entity &entity, Component::Context &context) : Component(entity, context) {}
 
 void WASDComponent::on_collision(Component::CollisionContext context) {
-    if (context.state == Component::CollisionState::STARTED) {
-        velocity *= -std::sqrt(0.5f);
-    }
+//    if (context.state == Component::CollisionState::STARTED) {
+//        velocity *= -std::sqrt(0.5f);
+//    }
 }
 

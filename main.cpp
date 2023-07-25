@@ -27,9 +27,9 @@ constexpr float HEIGHT = 1080.0f;
 const string MODEL = "models/train.obj";
 const string MODEL2 = "models/background.obj";
 const string MODEL3 = "models/monkey.obj";
+const string MODEL4 = "models/super_backpack.obj";
 
 const glm::vec3 eyePosition = glm::vec3(0.0, 0.0, 5.0f);
-
 
 
 GLFWwindow * initialize_window() {
@@ -128,18 +128,31 @@ int main() {
 
 
     auto& main_object = engine.createEntityFromOBJPath("main", MODEL);
-    auto& second_object = engine.createEntityFromOBJPath("second", MODEL2);
-    auto& transparent_object = engine.createTransparentEntityFromOBJPath("transparent", MODEL3);
-    transparent_object.transform.setPosition({1, 1, 2});
     main_object.addComponent(std::make_unique<WASDComponent>(main_object, engine.getContext()));
+    main_object.addComponent(std::make_unique<RigidBodyComponent>(main_object, engine.getContext()));
+    main_object.getComponent<RigidBodyComponent>().setAcceleration(glm::vec3 {-0.0f, -1.f, 0.0f});
     main_object.getComponent<MeshComponent>().setAlbedoPath("textures/locomotive_diffuse.png");
-//    main_object.getComponent<MeshComponent>().setNormalPath("textures/1001_normal.png");
+
     main_object.getComponent<HitboxComponent>().height *= 1.0f;
     main_object.getComponent<HitboxComponent>().offset.y += 0.5f;
-    main_object.transform.setPosition(glm::vec3(0.0, 1.0, -0.0));
+    main_object.transform.setPosition(glm::vec3 {-3.3f, -0.f, 3.00f});
+
+    auto& second_object = engine.createEntityFromOBJPath("second", MODEL2);
+    second_object.addComponent(std::make_unique<RigidBodyComponent>(second_object, engine.getContext()));
+    second_object.getComponent<RigidBodyComponent>().setMass(8000.0f);
+    second_object.getComponent<HitboxComponent>().width *= 5.0f;
+    second_object.getComponent<HitboxComponent>().depth *= 5.0f;
     second_object.getComponent<MeshComponent>().setSolidColor({0.3, 0.4, 0.5, 1.0});
     second_object.transform.setPosition(second_object.transform.getPosition() + glm::vec3(0.0, -3.0, 0.0));
     second_object.transform.setScale(glm::vec3(5.0f));
+
+//    auto& third_object = engine.createEntityFromOBJPath("third", MODEL4);
+//    third_object.addComponent(std::make_unique<RigidBodyComponent>(third_object, engine.getContext()));
+//    third_object.getComponent<MeshComponent>().setSolidColor(glm::vec4(0.0, 0.1, 0.5, 1.0));
+
+
+    auto& transparent_object = engine.createTransparentEntityFromOBJPath("transparent", MODEL3);
+    transparent_object.transform.setPosition({1, 1, 2});
 
     engine.frame_init();
     engine.start_physics();

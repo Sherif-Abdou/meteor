@@ -2,6 +2,7 @@
 // Created by sherif on 7/22/2023.
 //
 
+#include <iostream>
 #include "RigidBodyComponent.h"
 
 const glm::vec3 &RigidBodyComponent::getVelocity() const {
@@ -34,5 +35,31 @@ void RigidBodyComponent::applyForce(const glm::vec3 & force) {
 
 void RigidBodyComponent::applyImpulse(const glm::vec3 & impulse) {
     velocity += impulse * glm::vec3(getMass());
+}
+
+const char *RigidBodyComponent::getComponentName() {
+    return component_name;
+}
+
+const char *RigidBodyComponent::getClassComponentName() {
+    return component_name;
+}
+
+void RigidBodyComponent::init() {
+
+}
+
+void RigidBodyComponent::update(float deltaTime) {
+}
+
+RigidBodyComponent::RigidBodyComponent(Entity &entity, Component::Context &context) : Component(entity, context) {}
+
+void RigidBodyComponent::physics_update(float deltaTime) {
+    setVelocity(getVelocity() + glm::vec3(deltaTime) * getAcceleration());
+    entity.transform.setPosition(entity.transform.getPosition() + glm::vec3(deltaTime) * getVelocity());
+}
+
+glm::vec3 RigidBodyComponent::getPosition() {
+    return entity.transform.getPosition();
 }
 

@@ -16,10 +16,15 @@ public:
     using MatchList = std::vector<std::pair<unsigned int, unsigned int>>;
 private:
     std::vector<AABB*> colliders {};
+public:
+    const std::vector<AABB *> &getColliders() const;
+
+private:
     MatchSet checkAxisOverlaps(std::vector<AABBItem> axis);
 public:
     void addCollider(AABB*);
     MatchList checkForCollisions();
+    AABB findIntersection(const AABB&, const AABB&);
 };
 
 

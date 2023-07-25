@@ -6,6 +6,7 @@
 #include "CoreEngine.h"
 #include "components/MeshComponent.h"
 #include "components/HitboxComponent.h"
+#include "components/RigidBodyComponent.h"
 
 void CoreEngine::frame_init() {
     pipeline.init();
@@ -154,12 +155,30 @@ void CoreEngine::handleCollisions(const CollisionManager::MatchList& collisions)
         Component::CollisionState collisionState;
         if (std::find(previousCollisions.begin(), previousCollisions.end(), std::pair {first_id, second_id}) == previousCollisions.end()) {
             collisionState = Component::CollisionState::STARTED;
+            handleRigidBodyCollision({first_id, second_id});
         } else {
             collisionState = Component::CollisionState::ONGOING;
         }
         collider_map[first_id]->on_collision({collider_map[second_id], collisionState});
         collider_map[second_id]->on_collision({collider_map[first_id], collisionState});
     }
+}
+
+void CoreEngine::handleRigidBodyCollision(std::pair<unsigned int, unsigned int> colliders) {
+    auto first = collider_map[colliders.first];
+    auto second = collider_map[colliders.second];
+    if (!first->hasComponent<RigidBodyComponent>() || !second->hasComponent<RigidBodyComponent>())
+        return;
+
+    auto& first_rigidbody = first->getComponent<RigidBodyComponent>();
+    auto& second_rigidbody = second->getComponent<RigidBodyComponent>();
+
+    auto first_box = collisionManager.getColliders()[colliders.first];
+    auto second_box = collisionManager.getColliders()[colliders.second];
+
+    auto bounding_box = collisionManager.findIntersection(*first_box, *second_box);
+
+    rigidBodyManager.handleCollision(first_rigidbody, second_rigidbody, bounding_box.center());
 }
 
 CoreEngine::CoreEngine(RenderPipeline pipeline): pipeline(std::move(pipeline)) {

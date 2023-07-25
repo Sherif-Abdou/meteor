@@ -5,6 +5,8 @@
 #ifndef METEOR_AABB_H
 #define METEOR_AABB_H
 
+#include <glm/vec3.hpp>
+
 struct AABBItem {
     bool isStart;
     float value;
@@ -20,6 +22,7 @@ public:
     AABBItem endYItem();
     AABBItem startZItem();
     AABBItem endZItem();
+    glm::vec3 center();
 private:
     unsigned int id;
 public:

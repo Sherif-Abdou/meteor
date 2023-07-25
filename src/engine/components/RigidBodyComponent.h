@@ -10,6 +10,8 @@
 
 class RigidBodyComponent: public Component {
 public:
+    RigidBodyComponent(Entity &entity, Context &context);
+
     const glm::vec3 &getVelocity() const;
 
     void setVelocity(const glm::vec3 &velocity);
@@ -25,11 +27,23 @@ public:
     void applyForce(const glm::vec3 &);
 
     void applyImpulse(const glm::vec3 &);
+
+    const char *getComponentName() override;
+
+    static const char *getClassComponentName();
+
+    void init() override;
+
+    void update(float deltaTime) override;
+
+    void physics_update(float deltaTime) override;
+
+    glm::vec3 getPosition();
 private:
     constexpr static const char* component_name = "rigidbody_component";
-    glm::vec3 velocity;
-    glm::vec3 acceleration;
-    float mass;
+    glm::vec3 velocity {};
+    glm::vec3 acceleration {};
+    float mass = 1.0f;
 };
 
 

@@ -70,3 +70,20 @@ CollisionManager::MatchSet CollisionManager::checkAxisOverlaps(std::vector<AABBI
 void CollisionManager::addCollider(AABB * collider) {
     this->colliders.push_back(collider);
 }
+
+// Assumes there is an intersection
+AABB CollisionManager::findIntersection(const AABB & a, const AABB & b) {
+    AABB bounding_box {};
+    bounding_box.startX = std::max(a.startX, b.startX);
+    bounding_box.endX = std::min(a.endX, b.endX);
+    bounding_box.startY = std::max(a.startY, b.startY);
+    bounding_box.endY = std::min(a.endY, b.endY);
+    bounding_box.startZ = std::max(a.startZ, b.startZ);
+    bounding_box.endZ = std::min(a.endZ, b.endZ);
+
+    return bounding_box;
+}
+
+const std::vector<AABB *> &CollisionManager::getColliders() const {
+    return colliders;
+}

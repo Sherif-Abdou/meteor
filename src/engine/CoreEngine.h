@@ -13,6 +13,7 @@
 #include "Entity.h"
 #include "../RenderPipeline.h"
 #include "physics/CollisionManager.h"
+#include "physics/RigidBodyManager.h"
 #include <unordered_map>
 
 class CoreEngine {
@@ -22,10 +23,12 @@ private:
     bool physics_enabled = true;
     Component::Context context {};
     CollisionManager collisionManager {};
+    RigidBodyManager rigidBodyManager {};
     std::unordered_map<unsigned int, Entity*> collider_map {};
     CollisionManager::MatchList previousCollisions;
 
     void handleCollisions(const CollisionManager::MatchList& collisions);
+    void handleRigidBodyCollision(std::pair<unsigned int, unsigned int>);
 public:
     explicit CoreEngine();
     explicit CoreEngine(RenderPipeline pipeline);
